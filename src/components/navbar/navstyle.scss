@@ -1,0 +1,49 @@
+.nav_bar {
+  width: 100%;
+  padding: 0.5rem 1rem;
+}
+
+.link_container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 1.5rem;
+}
+
+.inner_link_container {
+  display: flex;
+  width: 100%;
+  justify-self: center;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.nav_break {
+  width: 100%;
+  height: 0.25rem;
+
+  margin-top: 0.5rem;
+  background-color: #477998;
+}
+
+.home_button_container {
+  justify-self: start;
+}
+
+.login_button_container {
+  justify-self: end;
+}
+
+.home_button {
+  padding: 0.5rem 2.5rem;
+  border-radius: 0.5rem;
+  background-color: #477998;
+
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #291F1E;
+}
