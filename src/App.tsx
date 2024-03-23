@@ -8,7 +8,7 @@ import Glucose from './pages/glucose';
 
 function App() {
   return (
-    <>
+    <div className='page_container'>
       <Navbar />
       
       <Routes>
@@ -17,7 +17,7 @@ function App() {
         <Route path="/exercise" element={<Exercise />} />
         <Route path="/glucose" element={<Glucose />} />
       </Routes>
-    </>
+    </div>
   );
 }
 
