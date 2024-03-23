@@ -19,7 +19,7 @@ const Visual = () => {
         <button onClick={() => setIsGraph(false)} className={isGraph ? '' : 'active'}>Log</button>
       </div>
     </>
-  )
+  );
 };
 
 export default Visual;
