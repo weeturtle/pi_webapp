@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/navbar';
-import Home from './pages/home';
-import Nutrition from './pages/nutrition';
-import Exercise from './pages/exercise';
-import Glucose from './pages/glucose';
+import Home from './pages/home/home';
+import Nutrition from './pages/nutrition/nutrition';
+import Exercise from './pages/exercise/exercise';
+import Glucose from './pages/glucose/glucose';
 
 function App() {
   return (

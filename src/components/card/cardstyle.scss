@@ -1,0 +1,22 @@
+.card_container {
+  width: 25rem;
+  height: 45rem;
+  margin: 3rem;
+
+  background-color: #B4CD99;
+  border-radius: 2.75rem; 
+  border: 6px solid #477998;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card_title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 1rem;
+  color: #477998;
+}
+
+

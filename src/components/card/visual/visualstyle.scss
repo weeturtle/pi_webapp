@@ -1,0 +1,31 @@
+.visual_inner_container {
+  width: 20rem;
+  height: 13rem;
+
+  border-radius: 0.75rem; 
+  border: 2px solid #477998;
+}
+
+.switch_container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  width: 15rem;
+  height: 2rem;
+  margin: 0.5rem;
+  border: 2px solid #477998;
+  border-radius: 0.75rem;
+}
+
+button {
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  
+}
+
+.active {
+  background-color: #C4D6B0 !important;
+  border-radius: inherit;
+}
