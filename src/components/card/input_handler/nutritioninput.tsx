@@ -1,10 +1,55 @@
 import { useState } from 'react';
 import './inputhandler.scss';
+import { useAuth } from '../../../auth/AuthProvider';
+import { BASE_URL } from '../../../vars';
 
 const NutritionInputs = () => {
   const [description, setDescription] = useState<string>();
   const [calories, setCalories] = useState<number>();
   const [datetime, setDatetime] = useState<Date>(new Date());
+
+  const { user } = useAuth();
+
+  const handle_submit = async () => {
+    // TODO! Check if all fields are filled
+
+    if (await send_data()) {
+      clear_fields();
+    }
+
+    // TODO! Show feedback
+  };
+
+  const clear_fields = () => {
+    setDescription('');
+    setCalories(0);
+    setDatetime(new Date());
+  };
+
+  const send_data = async () => {
+    const data = {
+      'description': description,
+      'calories': calories,
+      'date_time': datetime,
+      'username': user
+    };
+
+    const response = await fetch(`${BASE_URL}/nutrition`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      console.log('Meal added');
+      return true;
+    } else {
+      console.log('Failed to add meal');
+      return false;
+    }
+  };
 
   const has_value = (value: unknown) => {
     return value !== null && value !== undefined && value !== '' && value !== 0;
@@ -40,7 +85,7 @@ const NutritionInputs = () => {
         </div>
       </div>
 
-      <button className='submit'>
+      <button className='submit' onClick={handle_submit}>
         Add Meal
       </button>
     </div>

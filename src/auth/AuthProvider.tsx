@@ -1,8 +1,7 @@
 import { useContext, createContext, ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../vars';
 
-// const URL = 'http://192.168.1.196:10000/login';
-const URL = 'https://pi-backend-179v.onrender.com/login';
 
 interface AuthContextType {
   token: null | string,
@@ -21,7 +20,7 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
 
   const loginAction = async (username: string, password: string) => {
     try {
-      const response = await fetch(URL, {
+      const response = await fetch(`${BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
