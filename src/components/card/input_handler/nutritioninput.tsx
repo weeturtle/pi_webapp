@@ -6,6 +6,7 @@ import { BASE_URL } from '../../../vars';
 const NutritionInputs = () => {
   const [description, setDescription] = useState<string>();
   const [calories, setCalories] = useState<number>();
+  const [quantity, setQuantity] = useState<number>();
   const [datetime, setDatetime] = useState<Date>(new Date());
 
   const { user } = useAuth();
@@ -24,13 +25,15 @@ const NutritionInputs = () => {
     setDescription('');
     setCalories(0);
     setDatetime(new Date());
+    setQuantity(0);
   };
 
   const send_data = async () => {
     const data = {
-      'description': description,
+      'foodName': description,
       'calories': calories,
-      'date_time': datetime,
+      'quantity': quantity,
+      'dateTime': datetime,
       'username': user
     };
 
@@ -74,7 +77,14 @@ const NutritionInputs = () => {
           />
           <label className={has_value(calories) ? 'valid' : ''}>Calories</label>
         </div>
-
+        <div className='input_box'>
+          <input
+            value={quantity ? quantity : ''}
+            type='number'
+            onChange={(e) => setQuantity(e.target.value as unknown as number)}
+          />
+          <label className={has_value(quantity) ? 'valid' : ''}>Quantity</label>
+        </div>
         <div className='input_box'>
           <input
             value={datetime.toISOString().slice(0, 16)}
