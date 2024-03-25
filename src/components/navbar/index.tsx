@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import './navstyle.scss';
 import HomeButton from './home_button';
+import AccountButton from './account_button';
 
 const Navbar = () => {
   return (
@@ -28,9 +29,7 @@ const Navbar = () => {
           </li>
         </ul>
 
-        <Link to="/login" className='login_button_container'>
-          Login
-        </Link>
+        <AccountButton />
       </div>
 
       <div className='nav_break' />

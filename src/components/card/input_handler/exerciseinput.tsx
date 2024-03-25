@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import './inputhandler.scss';
+import { useAuth } from '../../../auth/AuthProvider';
+import { BASE_URL } from '../../../vars';
 
 const SPORTS = [
   'Running',
@@ -19,6 +21,53 @@ const ExerciseInputs = () => {
   const [calories, setCalories] = useState<number>();
   const [datetime, setDatetime] = useState<Date>(new Date());
   const [sport, setSport] = useState<string>();
+
+  const { user } = useAuth();
+
+  const handle_submit = async () => {
+    // TODO! Check if all fields are filled
+
+    if (await send_data()) {
+      clear_fields();
+    }
+
+    // TODO! Show feedback
+  };
+
+  const clear_fields = () => {
+    setDescription('');
+    setDuration(0);
+    setCalories(0);
+    setDatetime(new Date());
+    setSport('');
+  };
+
+  const send_data = async () => {
+    const data = {
+      'exerciseName': description,
+      'duration': duration,
+      'caloriesBurnt': calories,
+      'dateTime': datetime,
+      'exerciseType': sport,
+      'username': user
+    };
+
+    const response = await fetch(`${BASE_URL}/exercise`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      console.log('Exercise added');
+      return true;
+    } else {
+      console.log('Failed to add exercise');
+      return false;
+    }
+  };
 
   const has_value = (value: unknown) => {
     return value !== null && value !== undefined && value !== '' && value !== 0;
@@ -77,7 +126,7 @@ const ExerciseInputs = () => {
         </div>
       </div>
 
-      <button className='submit'>
+      <button className='submit' onClick={handle_submit}>
         Add Exercise
       </button>
     </div>

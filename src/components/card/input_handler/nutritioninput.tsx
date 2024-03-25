@@ -1,10 +1,58 @@
 import { useState } from 'react';
 import './inputhandler.scss';
+import { useAuth } from '../../../auth/AuthProvider';
+import { BASE_URL } from '../../../vars';
 
 const NutritionInputs = () => {
   const [description, setDescription] = useState<string>();
   const [calories, setCalories] = useState<number>();
+  const [quantity, setQuantity] = useState<number>();
   const [datetime, setDatetime] = useState<Date>(new Date());
+
+  const { user } = useAuth();
+
+  const handle_submit = async () => {
+    // TODO! Check if all fields are filled
+
+    if (await send_data()) {
+      clear_fields();
+    }
+
+    // TODO! Show feedback
+  };
+
+  const clear_fields = () => {
+    setDescription('');
+    setCalories(0);
+    setDatetime(new Date());
+    setQuantity(0);
+  };
+
+  const send_data = async () => {
+    const data = {
+      'foodName': description,
+      'calories': calories,
+      'quantity': quantity,
+      'dateTime': datetime,
+      'username': user
+    };
+
+    const response = await fetch(`${BASE_URL}/nutrition`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      console.log('Meal added');
+      return true;
+    } else {
+      console.log('Failed to add meal');
+      return false;
+    }
+  };
 
   const has_value = (value: unknown) => {
     return value !== null && value !== undefined && value !== '' && value !== 0;
@@ -29,7 +77,14 @@ const NutritionInputs = () => {
           />
           <label className={has_value(calories) ? 'valid' : ''}>Calories</label>
         </div>
-
+        <div className='input_box'>
+          <input
+            value={quantity ? quantity : ''}
+            type='number'
+            onChange={(e) => setQuantity(e.target.value as unknown as number)}
+          />
+          <label className={has_value(quantity) ? 'valid' : ''}>Quantity</label>
+        </div>
         <div className='input_box'>
           <input
             value={datetime.toISOString().slice(0, 16)}
@@ -40,7 +95,7 @@ const NutritionInputs = () => {
         </div>
       </div>
 
-      <button className='submit'>
+      <button className='submit' onClick={handle_submit}>
         Add Meal
       </button>
     </div>
