@@ -1,3 +1,5 @@
+import './datastyle.scss';
+
 const DescriptionBox = (description: string, setDescription: (description: string) => void) => {
   return (
     <div className="description-box">
