@@ -7,6 +7,7 @@ interface AuthContextType {
   token: null | string,
   user: null | string,
   loginAction: (username: string, password: string) => void,
+  signupAction: (email: string, username: string, password: string) => void,
   logOut: () => void,
 
 }
@@ -43,15 +44,58 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
     }
   };
 
+
+  const signupAction = async (email: string, username: string, password: string) =>{
+    try {
+      //check if username exists && maybe also if the email exists need to bring this up?
+      let response = await fetch(`${BASE_URL}/username-exists`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),
+      });
+  
+      let res = await response.json();
+      if (res.message === 'User exists') {
+        alert('Username already exists. Please choose a different one.');
+        return;
+      }
+  
+      //if the username they use doesnt exist can still work!!
+      response = await fetch(`${BASE_URL}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+  
+      res = await response.json();
+      if (res.success) {
+        console.log('Signup successful');
+        //need to log the user aftermaybe??? double checking perhaps not still need to get them to login still??
+        // setUser(username);
+        // setToken(res.token);
+        // localStorage.setItem('site', res.token);
+        //navigate('/login'); // when we get an actual login separate page refer it to that lol
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };  
+
+
   const logOut = () =>{
     setUser(null);
     setToken(null);
     localStorage.removeItem('site');
     navigate('/login');
   };
-
+  
   return (
-    <AuthContext.Provider value={{token, user, loginAction, logOut}}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{token, user, loginAction, logOut, signupAction}}>{children}</AuthContext.Provider>
   );
 };
 
