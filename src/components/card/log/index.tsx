@@ -2,11 +2,12 @@ import './logstyle.scss';
 
 //Need to change it fopr each one tho
 
+//now made all as unique callings of each field in mongoDB database
 interface NutritionDataItem { //based upn mongdb  --> got to get Neev & Srikar to have it sent proper
   'food_name': string;
-  'quantitiy': number; 
+  'quantitiy': number; //mispelt quantity in the db need to brought this up to Neev
   'calories': number; 
-  'date-time': number;
+  'date-time': number; //for some reason they added "date-time" instead of date_time oh well
 }
 
 interface ExerciseDataItem {
@@ -23,20 +24,19 @@ interface GlucoseDataItem {
   'description': string;
 }
 
-type DataItem = ExerciseDataItem | NutritionDataItem | GlucoseDataItem;
+type DataItem = ExerciseDataItem | NutritionDataItem | GlucoseDataItem; //probably more efficient to create a file with all this data but at this point I CBAAA 
 
 interface LogData {
   data: DataItem[];
   datatype: string;
 }
 
-const Log: React.FC<LogData> = ({ data, datatype}) => {
-  let tableHeaders: string[] = [];
+const Log = ({ data, datatype}:LogData) => {
+  let tableHeaders: string[] = []; 
   let tableData: (ExerciseDataItem | NutritionDataItem | GlucoseDataItem)[] = [];
 
-  switch (datatype) {
-  //indnetiation weird 
-  case 'Exercise': //Needs to be exactly tjese 3 surely more efficient way 
+  switch (datatype) { //made a switch type
+  case 'Exercise': 
     tableHeaders = ['Date', 'Exercise Name', 'Duration', 'Calories Burnt', 'Exercise Type'];
     tableData = data as ExerciseDataItem[];
     break;
