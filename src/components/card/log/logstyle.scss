@@ -1,0 +1,29 @@
+.log_container{
+    margin-top: 10.5%;
+    height: 90%;
+    width: 95%;
+    max-height: 360px;
+    border-collapse: collapse;
+    overflow: auto;
+
+    thead tr th{
+        background: #a1cea0;
+        color: #ffffff;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    th, td{
+        text-align: center;
+        padding: 8px;
+    }
+
+    tbody tr {
+        border-bottom: 1px solid #dddddd;
+    }
+
+    //alt colouring why not
+    tr:nth-child(odd){
+        background: #eee; 
+    }
+}

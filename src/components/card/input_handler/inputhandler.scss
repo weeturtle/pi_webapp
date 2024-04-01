@@ -37,14 +37,16 @@
   }
   
   label {
-    position: absolute;    
-    top: 0.5rem;
+    position: absolute; 
+    left: 0.5rem;   
+    top: 50%;
     transition: 0.2s;
+    transform: translateY(-50%);
   }
   
   input:focus + label,
   .valid {
-    transform: translateY(-1.5rem);
+    transform: translateY(-2rem);
     font-size: 0.75rem;
   }
 
