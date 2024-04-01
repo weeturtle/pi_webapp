@@ -25,7 +25,7 @@ const LoginBox = () => {
     alert('Please fill in all fields properly!');
   };
 
-  const [action, setAction] = useState('Sign up');
+  const [action, setAction] = useState('Login');
 
   return (
     <div className="login_container">
