@@ -3,13 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../vars';
 
 
-interface AuthContextType {
+export interface AuthContextType {
   token: null | string,
   user: null | string,
   loginAction: (username: string, password: string) => void,
   signupAction: (email: string, username: string, password: string) => void,
   logOut: () => void,
-
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -18,6 +17,7 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
   const [user, setUser] = useState<string | null>(null);
   const [token, setToken] = useState(localStorage.getItem('site') || null);
   const navigate = useNavigate();
+
 
   const loginAction = async (username: string, password: string) => {
     try {
@@ -75,10 +75,10 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
       if (res.success) {
         console.log('Signup successful');
         //need to log the user aftermaybe??? double checking perhaps not still need to get them to login still??
-        // setUser(username);
-        // setToken(res.token);
-        // localStorage.setItem('site', res.token);
-        //navigate('/login'); // when we get an actual login separate page refer it to that lol
+        setUser(username);
+        setToken(res.token);
+        localStorage.setItem('site', res.token);
+        navigate('/'); // when we get an actual login separate page refer it to that lol
         return;
       }
     } catch (error) {
