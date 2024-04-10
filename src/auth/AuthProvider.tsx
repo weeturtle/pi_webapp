@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../vars';
 
 
-interface AuthContextType {
+export interface AuthContextType {
   token: null | string,
   user: null | string,
   loginAction: (username: string, password: string) => void,

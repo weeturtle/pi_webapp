@@ -1,44 +1,31 @@
 import { useState } from 'react';
 import { useAuth } from '../../auth/AuthProvider';
 import './login.scss';
+import LoginForm from './login_form';
+import RegisterForm from './register_form';
+
+enum FormType {
+  LOGIN = 'Log in',
+  SIGNUP = 'Sign Up'
+}
 
 const LoginBox = () => {
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
   const auth = useAuth();
 
-  const handleSubmitEvent = () => {
-    if (username && password) {
-      auth.loginAction(username, password);
-      return;
-    }
-    alert('please provide a valid input');
-  };
+  const [currentForm, setCurrentForm] = useState<FormType>(FormType.LOGIN);
 
-  const handleSignupEvent = () =>{
-    if (email && username && password) {
-      auth.signupAction(email, username, password);
-      return;
-    }
-    alert('Please fill in all fields properly!');
-  };
-
-  const [action, setAction] = useState('Login');
 
   return (
     <div className="login_container">
-      <h2 className= "logintitle">{action}</h2>
+      <h2 className= "logintitle">{currentForm}</h2>
       <div className="decorunder"></div>
-      <div className = "submitbutton-container">
-        <div className = {action=== 'Login'?'submitbuttons': 'submitbuttons gray'} onClick={() => {setAction('Login');}}>Login</div>
-        <div className = {action=== 'Login'?'submitbuttons gray': 'submitbuttons'} onClick={() => {setAction('Sign up');}} >Sign up</div>
+      <div className = "formselector-container">
+        <button className={`form-option${currentForm === FormType.SIGNUP && ' gray'}`} onClick={() => setCurrentForm(FormType.LOGIN)}>Login</button>
+        <button className={`form-option${currentForm === FormType.LOGIN && ' gray'}`} onClick={() => setCurrentForm(FormType.SIGNUP)} >Sign up</button>
       </div>
-      {action=== 'Login'?<div></div>: <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />}
-      <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-      <button onClick={action === 'Login' ? handleSubmitEvent : handleSignupEvent}>{action}</button>
+      {
+        currentForm === FormType.LOGIN ? <LoginForm auth={auth} /> : <RegisterForm auth={auth} />
+      }
     </div>
   );
 };
