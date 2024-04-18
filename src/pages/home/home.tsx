@@ -1,4 +1,6 @@
-import { ExerciseCard, NutritionCard, GlucoseCard } from '../../components/card';
+import { GlucoseCard } from '../../components/card/GlucoseCard';
+import { NutritionCard } from '../../components/card/NutritionCard';
+import { ExerciseCard } from '../../components/card/ExerciseCard';
 import './homestyle.scss';
 
 const Home = () => {
