@@ -5,13 +5,22 @@ import { BASE_URL } from '../../../vars';
 
 const GlucoseInputs = () => {
   const [description, setDescription] = useState<string>();
-  const [level, setLevel] = useState<number>();
+  const [level, setLevel] = useState<number>(0.0);
   const [datetime, setDatetime] = useState<Date>(new Date());
 
   const { user } = useAuth();
 
   const handle_submit = async () => {
     // TODO! Check if all fields are filled
+    // Cannot be negative values!
+    // Cannot be invalid value type 
+    // Cannot be 
+
+    if (!entryvalidation){
+      console.log('Validation not passed');
+      return;
+    }
+
 
     if (await send_data()) {
       clear_fields();
@@ -24,6 +33,31 @@ const GlucoseInputs = () => {
     setDescription('');
     setDatetime(new Date());
     setLevel(0);
+  };
+
+
+  //Validatyion stuff need to add API maybe to double check --> Neev said they would do backend so only do basics for now
+  const entryvalidation = () => {
+    const now = new Date();
+    const nextYear = new Date(now.setFullYear(now.getFullYear() + 1));
+    const prevYear = new Date(now.setFullYear(now.getFullYear() - 1));
+    //description --> shioukld be called food name instead 
+    if (!description || level <= 0 || !datetime) {
+      alert('Please fill in all fields correctly.');
+      return false;
+    }
+
+    //glucose checking
+    if (level < 0) {
+      alert('Negative values are not allowed.');
+      return false;
+    }
+
+    //datetime checker 
+    if (datetime > nextYear || datetime < prevYear) {
+      alert('Date and time not valid');
+      return false;
+    }
   };
 
   const send_data = async () => {
