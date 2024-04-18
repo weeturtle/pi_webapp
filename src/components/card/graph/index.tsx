@@ -92,11 +92,13 @@ const Graph = ({ data, datatype, timeframe }:GraphData) => {
   
   const formattedData = formatDataForGraph(data); //store
 
+
+  //add dynamic labels
   return (
     <div className='graph_container'> {/*LOook how beautifiul it is! also complementatry colour for line need to change for revamp!*/}
       {formattedData.length > 0 ? (
         <ResponsiveContainer width='100%' height='100%'>
-          <LineChart data={formattedData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+          <LineChart data={formattedData}  margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
             <CartesianGrid stroke="#ccc" strokeDasharray='5 5' />
             <XAxis dataKey='date' />
             <YAxis />
