@@ -5,14 +5,19 @@ import { BASE_URL } from '../../../vars';
 
 const NutritionInputs = () => {
   const [description, setDescription] = useState<string>();
-  const [calories, setCalories] = useState<number>();
-  const [quantity, setQuantity] = useState<number>();
+  const [calories, setCalories] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(0);
   const [datetime, setDatetime] = useState<Date>(new Date());
 
   const { user } = useAuth();
 
   const handle_submit = async () => {
     // TODO! Check if all fields are filled
+
+    if (!entryvalidation){
+      console.log('Validation level');
+      return;
+    }
 
     if (await send_data()) {
       clear_fields();
@@ -27,6 +32,40 @@ const NutritionInputs = () => {
     setDatetime(new Date());
     setQuantity(0);
   };
+
+
+  //Validatyion stuff need to add API maybe to double check --> Neev said they would do backend so only do basics for now
+  const entryvalidation = () => {
+    const now = new Date();
+    const nextYear = new Date(now.setFullYear(now.getFullYear() + 1));
+    const prevYear = new Date(now.setFullYear(now.getFullYear() - 1));
+    //description --> shioukld be called food name instead 
+    if (!description || calories <= 0 || quantity <= 0 || !datetime) {
+      alert('Please fill in all fields correctly.');
+      return false;
+    }
+
+    //duration && calories checking
+    if (quantity < 0 || calories < 0) {
+      alert('Negative values are not allowed.');
+      return false;
+    }
+
+    //reasonable calorie count
+    if (calories > 9999) {
+      alert('Calorie count unreasonable');
+      return false;
+    }
+
+    //datetime checker 
+    if (datetime > nextYear || datetime < prevYear) {
+      alert('Date and time not valid');
+      return false;
+    }
+
+    return true;
+  };
+
 
   const send_data = async () => {
     const data = {
