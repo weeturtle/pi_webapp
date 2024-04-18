@@ -2,9 +2,10 @@ import { useState } from 'react';
 import './inputhandler.scss';
 import { useAuth } from '../../../auth/AuthProvider';
 import { BASE_URL } from '../../../vars';
+import SearchBox from '../searchbox';
 
 const NutritionInputs = () => {
-  const [description, setDescription] = useState<string>();
+  const [description, setDescription] = useState<string>('');
   const [calories, setCalories] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(0);
   const [datetime, setDatetime] = useState<Date>(new Date());
@@ -101,12 +102,13 @@ const NutritionInputs = () => {
     <div className="outer_container">
       <div className='input_container'>
         <div className='input_box description_box'>
-          <input
+          {/* <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             pattern=''
           />
-          <label className={has_value(description) ? 'valid' : ''}>Description</label>
+          <label className={has_value(description) ? 'valid' : ''}>Description</label> */}
+          <SearchBox api_url={`${BASE_URL}/autocomplete_food`} text={description} setText={setDescription} />
         </div>
         <div className='input_box'>
           <input
