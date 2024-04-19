@@ -14,8 +14,7 @@ const GlucoseInputs = () => {
 
   const handle_submit = async (addToast: (type: string, message?: string) => void) => {
     // TODO! Check if all fields are filled
-    if (!entryvalidation()) {
-      addToast('error', 'Glucose entry not valid!');
+    if (!entryvalidation(addToast)) {
       return;
     }
 
@@ -34,25 +33,25 @@ const GlucoseInputs = () => {
   };
 
   //Validatyion stuff need to add API maybe to double check --> Neev said they would do backend so only do basics for now
-  const entryvalidation = () => {
+  const entryvalidation = (addToast: (type: string, message?: string) => void) => {
     const now = new Date();
     const nextYear = new Date(now.setFullYear(now.getFullYear() + 1));
     const prevYear = new Date(now.setFullYear(now.getFullYear() - 1));
     //description --> shioukld be called food name instead 
     if (!description || !level || !datetime) {
-      alert('Please fill in all fields correctly.');
+      addToast('warning', 'Please fill in all fields correctly.');
       return false;
     } 
 
     //glucose reading checking
     if (level <= 0) {
-      alert('Negative values are not allowed.');
+      addToast('warning', 'Negative values are not allowed.');
       return false;
     }
 
     //datetime checker 
     if (datetime > nextYear || datetime < prevYear) {
-      alert('Date and time not valid');
+      addToast('warning', 'Date and time not valid.');
       return false;
     }
 
