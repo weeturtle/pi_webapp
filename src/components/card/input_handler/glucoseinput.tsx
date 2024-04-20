@@ -7,7 +7,7 @@ import ToastContainer from '../../toast/toast';
 
 const GlucoseInputs = () => {
   const [description, setDescription] = useState<string>();
-  const [level, setLevel] = useState<number>(0);
+  const [level, setLevel] = useState<number>(0.0);
   const [datetime, setDatetime] = useState<Date>(new Date());
 
   const { user } = useAuth();
@@ -15,6 +15,11 @@ const GlucoseInputs = () => {
   const handle_submit = async (addToast: (type: string, message?: string) => void) => {
     // TODO! Check if all fields are filled
     if (!entryvalidation(addToast)) {
+      return;
+    }
+
+    if (!entryvalidation){
+      console.log('Validation not passed');
       return;
     }
 
@@ -32,6 +37,7 @@ const GlucoseInputs = () => {
     setLevel(0);
   };
 
+
   //Validatyion stuff need to add API maybe to double check --> Neev said they would do backend so only do basics for now
   const entryvalidation = (addToast: (type: string, message?: string) => void) => {
     const now = new Date();
@@ -45,7 +51,7 @@ const GlucoseInputs = () => {
 
     //glucose reading checking
     if (level <= 0) {
-      addToast('warning', 'Negative values are not allowed.');
+      addToast('warning', 'Negative values are not allowed.')
       return false;
     }
 
