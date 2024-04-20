@@ -51,7 +51,7 @@ const GlucoseInputs = () => {
 
     //glucose reading checking
     if (level <= 0) {
-      addToast('warning', 'Negative values are not allowed.')
+      addToast('warning', 'Negative values are not allowed.');
       return false;
     }
 
