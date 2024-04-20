@@ -1,28 +1,31 @@
 import { useState, useEffect } from 'react';
-import './toast.css';
+import './toast.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleCheck, faCircleXmark, faTriangleExclamation, faCircleInfo, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'; // Import type for icons
 
 interface ToastDetails {
   [key: string]: {
-    icon: string;
+    icon: IconDefinition;
     text: string;
   };
 }
 
 const toastDetails: ToastDetails = {
   success: {
-    icon: 'fa-circle-check',
+    icon: faCircleCheck,
     text: 'Success: something good happened.',
   },
   error: {
-    icon: 'fa-circle-xmark',
+    icon: faCircleXmark,
     text: 'Error: error occurred.',
   },
   warning: {
-    icon: 'fa-triangle-exclamation',
+    icon: faTriangleExclamation,
     text: 'Warning: warning.',
   },
   info: {
-    icon: 'fa-circle-info',
+    icon: faCircleInfo,
     text: 'Info: here is some info.',
   },
 };
@@ -42,10 +45,12 @@ const ToastNotification = ({ type, message, onDismiss }: ToastNotificationProps)
   return (
     <li className={`toast ${type}`} onClick={onDismiss}>
       <div className="column">
-        <i className={`fa-solid ${toastDetails[type].icon}`}></i>
+        <FontAwesomeIcon icon= {toastDetails[type].icon} />
+        {/*<i className={`fa-solid ${toastDetails[type].icon}`}></i>*/}
         <span>{message || toastDetails[type].text}</span>
       </div>
-      <i className="fa-solid fa-xmark"></i>
+      {/*<i className="fa-solid fa-xmark"></i>*/}
+      <FontAwesomeIcon icon={faXmark} onClick={onDismiss} />
     </li>
   );
 };

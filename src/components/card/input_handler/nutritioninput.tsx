@@ -102,7 +102,8 @@ const NutritionInputs = () => {
                 pattern=''
               />
               <label className={has_value(description) ? 'valid' : ''}>Description</label>*/}
-              <SearchBox api_url={`${BASE_URL}/autocomplete_food`} text={description} setText={setDescription} />
+              <SearchBox api_url={`${BASE_URL}/autocomplete_food`} text={description} setText={setDescription} />  {/*BRUh no CSss */}
+              <label className={has_value(description) ? 'valid' : ''}>Description</label> {/*FFS max I need to make a new label type : (*/}
             </div>
             <div className='input_box'>
               <input
