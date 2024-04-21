@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './inputhandler.scss';
 import { useAuth } from '../../../auth/AuthProvider';
 import { BASE_URL } from '../../../vars';
-import ToastContainer from '../../toast/toast';
+import { useToast } from '../../toast/toast';
 
 const SPORTS = [
   'Running',
@@ -25,8 +25,9 @@ const ExerciseInputs = () => {
 
   const { user } = useAuth();
   
+  const { addToast } = useToast();
 
-  const handle_submit = async (addToast: (type: string, message?: string) => void) => {
+  const handle_submit = async () => {
     // TODO! Check if all fields are filled
     if (!entryvalidation(addToast)) {
       return;
@@ -117,65 +118,61 @@ const ExerciseInputs = () => {
   };
 
   return (
-    <ToastContainer>
-      {(addToast) => (
-        <div className="outer_container">
-          <div className='input_container'>
-            <div className='input_box description_box'>
-              <input
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                pattern=''
-              />
-              <label className={has_value(description) ? 'valid' : ''}>Description</label>
-            </div>
-            <div className='input_box'>
-              <input
-                value={duration ? duration : ''}
-                type='number'
-                onChange={(e) => setDuration(e.target.value as unknown as number)}
-              />
-              <label className={has_value(duration) ? 'valid' : ''}>Duration</label>
-            </div>
-            <div className='input_box'>
-              <input
-                value={calories ? calories : ''}
-                type='number'
-                onChange={(e) => setCalories(e.target.value as unknown as number)}
-              />
-              <label className={has_value(calories) ? 'valid' : ''}>Calories</label>
-            </div>
-
-            <div className='input_box'>
-              <input
-                value={datetime.toISOString().slice(0, 16)}
-                type='datetime-local'
-                onChange={(e) => setDatetime(new Date(e.target.value))}
-              />
-              <label className={has_value(datetime) ? 'valid' : ''}>Date and Time</label>
-            </div>
-
-            <div className='input_box'>
-              <select
-                value={sport}
-                onChange={(e) => setSport(e.target.value)}
-              >
-                <option value=''>Select Sport</option>
-                {SPORTS.map((sport) => (
-                  <option key={sport} value={sport}>
-                    {sport}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <button className='submit' onClick={() => handle_submit(addToast)}>
-            Add Exercise
-          </button>
+    <div className="outer_container">
+      <div className='input_container'>
+        <div className='input_box description_box'>
+          <input
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            pattern=''
+          />
+          <label className={has_value(description) ? 'valid' : ''}>Description</label>
         </div>
-      )}
-    </ToastContainer>
+        <div className='input_box'>
+          <input
+            value={duration ? duration : ''}
+            type='number'
+            onChange={(e) => setDuration(e.target.value as unknown as number)}
+          />
+          <label className={has_value(duration) ? 'valid' : ''}>Duration</label>
+        </div>
+        <div className='input_box'>
+          <input
+            value={calories ? calories : ''}
+            type='number'
+            onChange={(e) => setCalories(e.target.value as unknown as number)}
+          />
+          <label className={has_value(calories) ? 'valid' : ''}>Calories</label>
+        </div>
+
+        <div className='input_box'>
+          <input
+            value={datetime.toISOString().slice(0, 16)}
+            type='datetime-local'
+            onChange={(e) => setDatetime(new Date(e.target.value))}
+          />
+          <label className={has_value(datetime) ? 'valid' : ''}>Date and Time</label>
+        </div>
+
+        <div className='input_box'>
+          <select
+            value={sport}
+            onChange={(e) => setSport(e.target.value)}
+          >
+            <option value=''>Select Sport</option>
+            {SPORTS.map((sport) => (
+              <option key={sport} value={sport}>
+                {sport}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <button className='submit' onClick={handle_submit}>
+            Add Exercise
+      </button>
+    </div>
   );
 };
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AuthContextType } from '../../auth/AuthProvider';
-import ToastContainer from '../toast/toast';
+import { useToast } from '../toast/toast';
 
 interface RegisterFormProps {
   auth: AuthContextType
@@ -11,31 +11,23 @@ const RegisterForm = ({auth}: RegisterFormProps) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  /*const handleSignupEvent = () =>{
+  const { addToast } = useToast();
+  
+  const handleSignupEvent = () =>{
     if (email && username && password) {
       auth.signupAction(email, username, password);
-      return;
+    } else {
+      addToast('warning', 'Please fill in all fields properly!');
     }
-    alert('Please fill in all fields properly!');
-  };*/
+  };
 
   return (
-    <ToastContainer>
-      {addToast => (
-        <>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-          <button className="submitbutton" onClick={() => {
-            if (email && username && password) {
-              auth.signupAction(email, username, password);
-            } else {
-              addToast('warning', 'Please fill in all fields properly!');
-            }
-          }}>Register</button>
-        </>
-      )}
-    </ToastContainer>
+    <>
+      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+      <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
+      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+      <button className="submitbutton" onClick={handleSignupEvent}>Register</button>
+    </>
   );
 };
 

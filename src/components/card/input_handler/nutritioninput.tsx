@@ -3,8 +3,7 @@ import './inputhandler.scss';
 import { useAuth } from '../../../auth/AuthProvider';
 import { BASE_URL } from '../../../vars';
 import SearchBox from '../searchbox';
-import ToastContainer from '../../toast/toast';
-
+import { useToast } from '../../toast/toast';
 
 const NutritionInputs = () => {
   const [description, setDescription] = useState<string>('');
@@ -13,8 +12,9 @@ const NutritionInputs = () => {
   const [datetime, setDatetime] = useState<Date>(new Date());
 
   const { user } = useAuth();
+  const { addToast } = useToast();
 
-  const handle_submit = async (addToast: (type: string, message?: string) => void) => {
+  const handle_submit = async () => {
     if (!entryvalidation(addToast)) {
       addToast('error', 'Food entry not valid!');
       return;
@@ -98,51 +98,47 @@ const NutritionInputs = () => {
   };
 
   return (
-    <ToastContainer>
-      {(addToast) => (
-        <div className="outer_container">
-          <div className='input_container'>
-            <div className='input_box description_box'>
-              {/*<input
+    <div className="outer_container">
+      <div className='input_container'>
+        <div className='input_box description_box'>
+          {/*<input
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 pattern=''
               />
               <label className={has_value(description) ? 'valid' : ''}>Description</label>*/}
-              <SearchBox api_url={`${BASE_URL}/autocomplete_food`} text={description} setText={setDescription} />  {/*BRUh no CSss */}
-              <label className={has_value(description) ? 'valid' : ''}>Description</label> {/*FFS max I need to make a new label type : (*/}
-            </div>
-            <div className='input_box'>
-              <input
-                value={calories ? calories : ''}
-                type='number'
-                onChange={(e) => setCalories(e.target.value as unknown as number)}
-              />
-              <label className={has_value(calories) ? 'valid' : ''}>Calories</label>
-            </div>
-            <div className='input_box'>
-              <input
-                value={quantity ? quantity : ''}
-                type='number'
-                onChange={(e) => setQuantity(e.target.value as unknown as number)}
-              />
-              <label className={has_value(quantity) ? 'valid' : ''}>Quantity</label>
-            </div>
-            <div className='input_box'>
-              <input
-                value={datetime.toISOString().slice(0, 16)}
-                type='datetime-local'
-                onChange={(e) => setDatetime(new Date(e.target.value))}
-              />
-              <label className={has_value(datetime) ? 'valid' : ''}>Date and Time</label>
-            </div>
-          </div>
-          <button className='submit'  onClick={() => handle_submit(addToast)}>
-            Add Meal
-          </button>
+          <SearchBox api_url={`${BASE_URL}/autocomplete_food`} text={description} setText={setDescription} />  {/*BRUh no CSss */}
+          <label className={has_value(description) ? 'valid' : ''}>Description</label> {/*FFS max I need to make a new label type : (*/}
         </div>
-      )}
-    </ToastContainer>
+        <div className='input_box'>
+          <input
+            value={calories ? calories : ''}
+            type='number'
+            onChange={(e) => setCalories(e.target.value as unknown as number)}
+          />
+          <label className={has_value(calories) ? 'valid' : ''}>Calories</label>
+        </div>
+        <div className='input_box'>
+          <input
+            value={quantity ? quantity : ''}
+            type='number'
+            onChange={(e) => setQuantity(e.target.value as unknown as number)}
+          />
+          <label className={has_value(quantity) ? 'valid' : ''}>Quantity</label>
+        </div>
+        <div className='input_box'>
+          <input
+            value={datetime.toISOString().slice(0, 16)}
+            type='datetime-local'
+            onChange={(e) => setDatetime(new Date(e.target.value))}
+          />
+          <label className={has_value(datetime) ? 'valid' : ''}>Date and Time</label>
+        </div>
+      </div>
+      <button className='submit' onClick={handle_submit}>
+            Add Meal
+      </button>
+    </div>
   );
 };
 

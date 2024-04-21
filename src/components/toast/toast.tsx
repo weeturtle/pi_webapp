@@ -1,59 +1,6 @@
-import { useState, useEffect } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 import './toast.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleCheck, faCircleXmark, faTriangleExclamation, faCircleInfo, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core'; // Import type for icons
-
-interface ToastDetails {
-  [key: string]: {
-    icon: IconDefinition;
-    text: string;
-  };
-}
-
-const toastDetails: ToastDetails = {
-  success: {
-    icon: faCircleCheck,
-    text: 'Success: something good happened.',
-  },
-  error: {
-    icon: faCircleXmark,
-    text: 'Error: error occurred.',
-  },
-  warning: {
-    icon: faTriangleExclamation,
-    text: 'Warning: warning.',
-  },
-  info: {
-    icon: faCircleInfo,
-    text: 'Info: here is some info.',
-  },
-};
-
-interface ToastNotificationProps {
-  type: string;
-  message?: string;
-  onDismiss: () => void;
-}
-
-const ToastNotification = ({ type, message, onDismiss }: ToastNotificationProps) => {
-  useEffect(() => {
-    const timer = setTimeout(onDismiss, 5000); // goes off after 5s
-    return () => clearTimeout(timer);
-  }, [onDismiss]);
-
-  return (
-    <li className={`toast ${type}`} onClick={onDismiss}>
-      <div className="column">
-        <FontAwesomeIcon icon= {toastDetails[type].icon} />
-        {/*<i className={`fa-solid ${toastDetails[type].icon}`}></i>*/}
-        <span>{message || toastDetails[type].text}</span>
-      </div>
-      {/*<i className="fa-solid fa-xmark"></i>*/}
-      <FontAwesomeIcon icon={faXmark} onClick={onDismiss} />
-    </li>
-  );
-};
+import { ToastNotification } from './ToastNotification';
 
 interface Toast {
   id: string;
@@ -61,25 +8,27 @@ interface Toast {
   message?: string;
 }
 
-interface ToastContainerProps {
-  children: (addToast: (type: string, message?: string) => void) => React.ReactNode;
+interface ToastContextType {
+  addToast: (type: string, message?: string) => void;
 }
 
-const ToastContainer = ({ children }: ToastContainerProps) => {
+const ToastContext = createContext<ToastContextType>({} as ToastContextType);
+
+const ToastProvider = ({ children }: {children: ReactNode}) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const addToast = (type: string, message?: string) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    setToasts([...toasts, { id, type, message }]);
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts((toasts) => [...toasts, { id, type, message }]);
   };
 
   const removeToast = (id: string) => {
-    setToasts(toasts.filter(toast => toast.id !== id));
+    setToasts((toasts) => toasts.filter(toast => toast.id !== id));
   };
 
   return (
-    <>
-      {children(addToast)}
+    <ToastContext.Provider value={{ addToast }}>
+      {children}
       <ul className="notifications">
         {toasts.map(toast => (
           <ToastNotification
@@ -90,8 +39,13 @@ const ToastContainer = ({ children }: ToastContainerProps) => {
           />
         ))}
       </ul>
-    </>
+    </ToastContext.Provider>
   );
 };
 
-export default ToastContainer;
+// eslint-disable-next-line react-refresh/only-export-components
+export const useToast = () => {
+  return useContext(ToastContext);
+};
+
+export default ToastProvider;
