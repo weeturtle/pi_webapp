@@ -14,7 +14,6 @@ const LoginBox = () => {
 
   const [currentForm, setCurrentForm] = useState<FormType>(FormType.LOGIN);
 
-
   return (
     <div className="login_container">
       <h2 className= "logintitle">{currentForm}</h2>

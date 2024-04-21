@@ -3,6 +3,7 @@ import './inputhandler.scss';
 import { useAuth } from '../../../auth/AuthProvider';
 import { BASE_URL } from '../../../vars';
 import SearchBox from '../searchbox';
+import { useToast } from '../../toast/toast';
 
 const NutritionInputs = () => {
   const [description, setDescription] = useState<string>('');
@@ -11,9 +12,13 @@ const NutritionInputs = () => {
   const [datetime, setDatetime] = useState<Date>(new Date());
 
   const { user } = useAuth();
+  const { addToast } = useToast();
 
   const handle_submit = async () => {
-    // TODO! Check if all fields are filled
+    if (!entryvalidation(addToast)) {
+      addToast('error', 'Food entry not valid!');
+      return;
+    }
 
     if (!entryvalidation){
       console.log('Validation level');
@@ -22,9 +27,42 @@ const NutritionInputs = () => {
 
     if (await send_data()) {
       clear_fields();
+      addToast('success', 'Meal added successfully!');
+    } else {
+      addToast('error', 'Failed to add meal.');
+    }
+  };
+
+  //Validatyion stuff need to add API maybe to double check --> Neev said they would do backend so only do basics for now
+  const entryvalidation = (addToast: (type: string, message?: string) => void) => {
+    const now = new Date();
+    const nextYear = new Date(now.setFullYear(now.getFullYear() + 1));
+    const prevYear = new Date(now.setFullYear(now.getFullYear() - 1));
+    //description --> shioukld be called food name instead 
+    if (!description || !datetime || !quantity || !calories) {
+      addToast('warning', 'Please fill in all fields correctly.');
+      return false;
+    } 
+
+    //duration && calories checking
+    if (quantity < 0 || calories < 0) {
+      addToast('warning', 'Negative values are not allowed.');
+      return false;
     }
 
-    // TODO! Show feedback
+    //reasonable calorie count
+    if (calories > 9999 || calories < 1) {
+      addToast('warning', 'Calorie count unreasonable.');
+      return false;
+    }
+
+    //datetime checker 
+    if (datetime > nextYear || datetime < prevYear) {
+      addToast('warning', 'Date and time not valid.');
+      return false;
+    }
+
+    return true;
   };
 
   const clear_fields = () => {
@@ -32,39 +70,6 @@ const NutritionInputs = () => {
     setCalories(0);
     setDatetime(new Date());
     setQuantity(0);
-  };
-
-
-  //Validatyion stuff need to add API maybe to double check --> Neev said they would do backend so only do basics for now
-  const entryvalidation = () => {
-    const now = new Date();
-    const nextYear = new Date(now.setFullYear(now.getFullYear() + 1));
-    const prevYear = new Date(now.setFullYear(now.getFullYear() - 1));
-    //description --> shioukld be called food name instead 
-    if (!description || calories <= 0 || quantity <= 0 || !datetime) {
-      alert('Please fill in all fields correctly.');
-      return false;
-    }
-
-    //duration && calories checking
-    if (quantity < 0 || calories < 0) {
-      alert('Negative values are not allowed.');
-      return false;
-    }
-
-    //reasonable calorie count
-    if (calories > 9999) {
-      alert('Calorie count unreasonable');
-      return false;
-    }
-
-    //datetime checker 
-    if (datetime > nextYear || datetime < prevYear) {
-      alert('Date and time not valid');
-      return false;
-    }
-
-    return true;
   };
 
 
@@ -85,13 +90,7 @@ const NutritionInputs = () => {
       body: JSON.stringify(data),
     });
 
-    if (response.ok) {
-      console.log('Meal added');
-      return true;
-    } else {
-      console.log('Failed to add meal');
-      return false;
-    }
+    return response.ok;
   };
 
   const has_value = (value: unknown) => {
@@ -102,13 +101,14 @@ const NutritionInputs = () => {
     <div className="outer_container">
       <div className='input_container'>
         <div className='input_box description_box'>
-          {/* <input
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            pattern=''
-          />
-          <label className={has_value(description) ? 'valid' : ''}>Description</label> */}
-          <SearchBox api_url={`${BASE_URL}/autocomplete_food`} text={description} setText={setDescription} />
+          {/*<input
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                pattern=''
+              />
+              <label className={has_value(description) ? 'valid' : ''}>Description</label>*/}
+          <SearchBox api_url={`${BASE_URL}/autocomplete_food`} text={description} setText={setDescription} />  {/*BRUh no CSss */}
+          <label className={has_value(description) ? 'valid' : ''}>Description</label> {/*FFS max I need to make a new label type : (*/}
         </div>
         <div className='input_box'>
           <input
@@ -135,9 +135,8 @@ const NutritionInputs = () => {
           <label className={has_value(datetime) ? 'valid' : ''}>Date and Time</label>
         </div>
       </div>
-
       <button className='submit' onClick={handle_submit}>
-        Add Meal
+            Add Meal
       </button>
     </div>
   );

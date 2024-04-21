@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { AuthContextType } from '../../auth/AuthProvider';
+import { useToast } from '../toast/toast';
 
 interface RegisterFormProps {
   auth: AuthContextType
@@ -10,12 +11,14 @@ const RegisterForm = ({auth}: RegisterFormProps) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const { addToast } = useToast();
+  
   const handleSignupEvent = () =>{
     if (email && username && password) {
       auth.signupAction(email, username, password);
-      return;
+    } else {
+      addToast('warning', 'Please fill in all fields properly!');
     }
-    alert('Please fill in all fields properly!');
   };
 
   return (

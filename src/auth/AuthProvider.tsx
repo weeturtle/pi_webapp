@@ -1,7 +1,7 @@
 import { useContext, createContext, ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../vars';
-
+// import { useToast } from '../components/toast/toast';
 
 export interface AuthContextType {
   token: null | string,
@@ -18,8 +18,9 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
   const [token, setToken] = useState(localStorage.getItem('site') || null);
   const navigate = useNavigate();
 
+  // const { addToast } = useToast();
 
-  const loginAction = async (username: string, password: string) => {
+  const loginAction = async (username: string, password: string) => { 
     try {
       const response = await fetch(`${BASE_URL}/login`, {
         method: 'POST',
@@ -32,12 +33,15 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
       const res = await response.json();
       if (res.success) {
         console.log('Login successful');
+        // addToast('success', 'Login successful!');
         setUser(username);
         setToken(res.token);
         localStorage.setItem('site', res.token);
         console.log('Token:', res.token);
         navigate('/');
         return;
+      } else {
+        // addToast('error', 'Invalid username or password.');
       }
     } catch (error) {
       console.error(error);
@@ -58,7 +62,7 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
   
       let res = await response.json();
       if (res.message === 'User exists') {
-        alert('Username already exists. Please choose a different one.');
+        // addToast('warning', 'Username already exists. Please choose a different one.');
         return;
       }
   
@@ -73,16 +77,19 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
   
       res = await response.json();
       if (res.success) {
-        console.log('Signup successful');
+        // addToast('success', 'Signup successful!');
         //need to log the user aftermaybe??? double checking perhaps not still need to get them to login still??
         setUser(username);
         setToken(res.token);
         localStorage.setItem('site', res.token);
-        navigate('/'); // when we get an actual login separate page refer it to that lol
+        navigate('/'); // when we get an actual login separate page refer it to that lol 
         return;
+      } else {
+        // addToast('error', 'An error occurred during signup.');
       }
     } catch (error) {
       console.error(error);
+      // addToast('error', 'An error occurred during signup.');
     }
   };  
 
@@ -95,7 +102,14 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
   };
   
   return (
-    <AuthContext.Provider value={{token, user, loginAction, logOut, signupAction}}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{
+      token, user,
+      loginAction, //trying refer within
+      signupAction, // --> update: nope just stick it outer
+      logOut
+    }}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 
@@ -105,3 +119,4 @@ export const useAuth = () => {
 };
 
 export default AuthProvider;
+

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './inputhandler.scss';
 import { useAuth } from '../../../auth/AuthProvider';
 import { BASE_URL } from '../../../vars';
+import { useToast } from '../../toast/toast';
 
 const GlucoseInputs = () => {
   const [description, setDescription] = useState<string>();
@@ -9,24 +10,25 @@ const GlucoseInputs = () => {
   const [datetime, setDatetime] = useState<Date>(new Date());
 
   const { user } = useAuth();
+  const { addToast } = useToast();
 
   const handle_submit = async () => {
     // TODO! Check if all fields are filled
-    // Cannot be negative values!
-    // Cannot be invalid value type 
-    // Cannot be 
+    if (!entryvalidation(addToast)) {
+      return;
+    }
 
     if (!entryvalidation){
       console.log('Validation not passed');
       return;
     }
 
-
     if (await send_data()) {
       clear_fields();
+      addToast('success', 'Glucose readings added successfully!');
+    } else {
+      addToast('error', 'Failed to add glucose readings.');
     }
-
-    // TODO! Show feedback
   };
 
   const clear_fields = () => {
@@ -37,28 +39,30 @@ const GlucoseInputs = () => {
 
 
   //Validatyion stuff need to add API maybe to double check --> Neev said they would do backend so only do basics for now
-  const entryvalidation = () => {
+  const entryvalidation = (addToast: (type: string, message?: string) => void) => {
     const now = new Date();
     const nextYear = new Date(now.setFullYear(now.getFullYear() + 1));
     const prevYear = new Date(now.setFullYear(now.getFullYear() - 1));
     //description --> shioukld be called food name instead 
-    if (!description || level <= 0 || !datetime) {
-      alert('Please fill in all fields correctly.');
+    if (!description || !level || !datetime) {
+      addToast('warning', 'Please fill in all fields correctly.');
       return false;
-    }
+    } 
 
-    //glucose checking
-    if (level < 0) {
-      alert('Negative values are not allowed.');
+    //glucose reading checking
+    if (level <= 0) {
+      addToast('warning', 'Negative values are not allowed.');
       return false;
     }
 
     //datetime checker 
     if (datetime > nextYear || datetime < prevYear) {
-      alert('Date and time not valid');
+      addToast('warning', 'Date and time not valid.');
       return false;
     }
-  };
+
+    return true;
+  };  
 
   const send_data = async () => {
     const data = {
@@ -85,6 +89,7 @@ const GlucoseInputs = () => {
     }
   };
 
+  
   const has_value = (value: unknown) => {
     return value !== null && value !== undefined && value !== '' && value !== 0;
   };
@@ -120,9 +125,10 @@ const GlucoseInputs = () => {
       </div>
 
       <button className='submit' onClick={handle_submit}>
-        Add Reading
+            Add Reading
       </button>
     </div>
+
   );
 };
 
