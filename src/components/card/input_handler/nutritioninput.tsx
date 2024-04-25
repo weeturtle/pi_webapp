@@ -101,7 +101,7 @@ const NutritionInputs = () => {
     <div className="outer_container">
       <div className='input_container'>
         <div className='input_box description_box'>
-          {/*<input
+          {/*<inputN
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 pattern=''
