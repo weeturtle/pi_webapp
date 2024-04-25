@@ -7,7 +7,7 @@ interface NutritionDataItem { //based upn mongdb  --> got to get Neev & Srikar t
   'food_name': string;
   'quantitiy': number; //mispelt quantity in the db need to brought this up to Neev
   'calories': number; 
-  'date-time': number; //for some reason they added "date-time" instead of date_time oh well
+  'date_time': number; //for some reason they added "date-time" instead of date_time oh well
 }
 
 interface ExerciseDataItem {
@@ -15,12 +15,12 @@ interface ExerciseDataItem {
   'duration': number; 
   'calories_burnt': number; 
   'exercise_type': string;
-  'date-time': number; 
+  'date_time': number; 
 }
 
 interface GlucoseDataItem {
   'glucose-level': number;
-  'date-time': number;
+  'date_time': number;
   'description': string;
 }
 
@@ -65,11 +65,11 @@ const Log = ({ data, datatype}:LogData) => {
         <tbody>
           {tableData.length > 0 ? (
             tableData.map((item, index) => (
-              console.log('Raw date_time value:', item['date-time']),
+              console.log('Raw date_time value:', item['date_time']),
               <tr key={index}>
                 {datatype === 'Exercise' && (
                   <>
-                    <td>{new Date(item['date-time']).toLocaleDateString()}</td>
+                    <td>{new Date(item['date_time']).toLocaleDateString()}</td>
                     {/*<td>{new Date((item as ExerciseDataItem).(item as ExerciseDataItem)['date-time']).toLocaleDateString()}</td>*/}
                     <td>{(item as ExerciseDataItem)['exercise_name']}</td>
                     <td>{(item as ExerciseDataItem)['duration']}</td>
@@ -79,7 +79,7 @@ const Log = ({ data, datatype}:LogData) => {
                 )}
                 {datatype === 'Nutrition' && (
                   <>
-                    <td>{new Date(item['date-time']).toLocaleDateString()}</td>
+                    <td>{new Date(item['date_time']).toLocaleDateString()}</td>
                     {/*<td>{new Date((item as NutritionDataItem).(item as NutritionDataItem)['date-time']).toLocaleDateString()}</td>*/}
                     <td>{(item as NutritionDataItem)['food_name']}</td>
                     <td>{(item as NutritionDataItem)['quantitiy']}</td>
@@ -88,7 +88,7 @@ const Log = ({ data, datatype}:LogData) => {
                 )}
                 {datatype === 'Glucose' && (
                   <>
-                    <td>{new Date(item['date-time']).toLocaleDateString()}</td>
+                    <td>{new Date(item['date_time']).toLocaleDateString()}</td>
                     {/*<td>{!isNaN(parseFloat(item['glucose-level'])) ? parseFloat(item['glucose-level']) : 'Invalid Level'}</td>*/}
                     {/*<td>{new Date((item as GlucoseDataItem).(item as GlucoseDataItem)['date-time']).toLocaleDateString()}</td>*/}
                     {/*<td>{(item as GlucoseDataItem).(item as GlucoseDataItem)['glucose-level']}</td>*/}

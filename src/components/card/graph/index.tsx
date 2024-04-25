@@ -8,7 +8,7 @@ interface NutritionDataItem{
   'food_name': string;
   'quantitiy': number; 
   'calories': number; 
-  'date-time': number;
+  'date_time': number;
 }
 
 interface ExerciseDataItem {
@@ -16,12 +16,12 @@ interface ExerciseDataItem {
   'duration': number; 
   'calories_burnt': number; 
   'exercise_type': string;
-  'date-time': number; 
+  'date_time': number; 
 }
 
 interface GlucoseDataItem {
   'glucose-level': number;
-  'date-time': number;
+  'date_time': number;
   'description': string;
 }
 
@@ -41,17 +41,17 @@ const Graph = ({ data, datatype, timeframe }:GraphData) => {
     switch (datatype) {
     case 'Exercise':
       return (data as ExerciseDataItem[]).map((item) => ({
-        date: formatDate(item['date-time'], timeframe),
+        date: formatDate(item['date_time'], timeframe),
         value: item['calories_burnt'],
       }));
     case 'Nutrition':
       return (data as NutritionDataItem[]).map((item) => ({
-        date: formatDate(item['date-time'], timeframe),
+        date: formatDate(item['date_time'], timeframe),
         value: item['calories'],
       }));
     case 'Glucose':
       return (data as GlucoseDataItem[]).map((item) => ({
-        date: formatDate(item['date-time'], timeframe),
+        date: formatDate(item['date_time'], timeframe),
         value: item['glucose-level'],
       }));
     default:

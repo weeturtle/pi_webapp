@@ -9,7 +9,7 @@ interface NutritionDataItem {
   'food_name': string;
   'quantitiy': number; 
   'calories': number; 
-  'date-time': number;
+  'date_time': number;
 }
 
 interface ExerciseDataItem {
@@ -17,12 +17,12 @@ interface ExerciseDataItem {
   'duration': number; 
   'calories_burnt': number; 
   'exercise_type': string;
-  'date-time': number; 
+  'date_time': number; 
 }
 
 interface GlucoseDataItem {
   'glucose-level': number;
-  'date-time': number;
+  'date_time': number;
   'description': string;
 }
 
