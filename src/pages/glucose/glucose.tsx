@@ -28,19 +28,33 @@ const Glucose = () => {
   const { user } = useAuth();
 
   useEffect(() => {  
+    const fetchGlucose = async () => {
+      //fetch exercise data for current timeframe
+      console.log('fetching exercise data');
+
+      const response = await fetch(`${BASE_URL}/glucose?username=${user}&timeSpan=month`); //expectss both username & timeframe (hopefully the timeframe is suitable!)
+      const result = await response.json();
+
+      // console.table(result.values);
+
+      setGlucoseData(result.values);
+    };
+
+    fetchGlucose();
+
     const fetchGoal = async () => {
       //fetch goal data for current timeframe
       const raw_goal = await fetch(`${BASE_URL}/goal?${new URLSearchParams({
         username: user || '',
         goalType: 'glucose',
-        field: 'calories_burnt',
+        field: 'mmol',
         timeSpan: graphTimeFrame,
       })}`, {
         method: 'GET'
       });
 
       const goal_data = await raw_goal.json();
-      console.table(goal_data);
+      // console.table(goal_data);
       return goal_data.goal;
     };
 

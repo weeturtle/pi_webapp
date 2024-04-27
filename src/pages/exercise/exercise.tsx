@@ -41,7 +41,7 @@ const Exercise = () => {
     const response = await fetch(`${BASE_URL}/exercise?username=${user}&timeSpan=month`); //expectss both username & timeframe (hopefully the timeframe is suitable!)
     const result = await response.json();
 
-    console.table(result.values);
+    // console.table(result.values);
 
     
     setExerciseData(result.values);
@@ -57,7 +57,7 @@ const Exercise = () => {
         const response = await fetch(`${BASE_URL}/exercise?username=${user}&timeSpan=month`); //expectss both username & timeframe (hopefully the timeframe is suitable!)
         const result = await response.json();
   
-        console.table(result.values);
+        // console.table(result.values);
 
         
         setExerciseData(result.values);
@@ -77,7 +77,7 @@ const Exercise = () => {
         });
 
         const goal_data = await raw_goal.json();
-        console.table(goal_data);
+        // console.table(goal_data);
         return goal_data.goal;
       };
     
@@ -115,7 +115,7 @@ const Exercise = () => {
     hande_goal_change();
 
     console.log('exercise data changed');
-    console.table(exerciseData);
+    // console.table(exerciseData);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphTimeFrame]);
 
