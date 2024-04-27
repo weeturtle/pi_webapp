@@ -1,0 +1,21 @@
+$grid-gap: 20px; 
+$section-padding: 20px;
+$border-radius: 15px;
+$section-background: white;
+$box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+.timeline .Gluctimeline {
+    width: 100%;
+    height: 200px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.timeline .Gluctimeline .chrono-timeline {
+    width: 100%;
+}
+
+.timeline .Gluctimeline .chrono-card {
+    width: 100%;
+    max-width: 300px;
+}

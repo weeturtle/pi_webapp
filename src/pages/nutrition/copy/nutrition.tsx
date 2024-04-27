@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import CalorieIntake from './calorieIntake';
-import MacroBreakdown from './macroBreakdown';
-import GoalOverview from './goalsOverview';
-import GoalSetting from './nutrigoalSetting';
-import MetricsBreakdown from './metricsBreakdown';
 import './nutrition.scss';
+import { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBowlFood, faBullseye, faArrowTrendUp, faArrowTrendDown} from '@fortawesome/free-solid-svg-icons';
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell} from 'recharts';
+
 
 interface Exercise{   
   exercise: string;
@@ -53,9 +52,9 @@ interface PieData {
   value: number;
 }
 
+
 const Nutrition = () => {
 
-  //made up data to simulate how it would arrive from database --> delete after data can be passed through fully for all components!
   const initialmacroData: MacroEntry[] = [
     { date_time: '08:30, 26-04-2024', food_name: 'Chicken Breast', quantity: '200g', calories: 330, carbs_g: 0, fat_saturated_g: 3.5, fat_total_g: 13, cholesterol_mg: 110, fiber_g: 0, potassium_mg: 530, protein_g: 50, sodium_mg: 300, sugar_g: 0 },
     { date_time: '12:15, 25-04-2024', food_name: 'Salmon', quantity: '150g', calories: 340, carbs_g: 0, fat_saturated_g: 5, fat_total_g: 20, cholesterol_mg: 90, fiber_g: 0, potassium_mg: 550, protein_g: 40, sodium_mg: 400, sugar_g: 0 },
@@ -135,7 +134,7 @@ const Nutrition = () => {
   const [amount, setAmount] = useState<number>(0);
   const [filteredExerciseData, setFilteredExerciseData] = useState<Exercise[]>([]);
   const [filteredCalorieData, setFilteredCalorieData] = useState<CalorieIntake[]>([]);
-  const [cumulativeCaloriesData, setCumulativeCaloriesData] = useState<{ date: string; cumulativeCalories: number; cumulativeExerciseCalories: number; goal: number }[]>([]);
+  const [cumulativeCaloriesData, setCumulativeCaloriesData] = useState<{ date: string; cumulativeCalories: number }[]>([]);
   const [goal, setGoal] = useState<number | null>(null);
   const [MacroData, setMacroData] = useState<PieData[]>([]);
 
@@ -148,9 +147,10 @@ const Nutrition = () => {
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
+  //gauge
   const dataCaloriesConsumed = [
     { name: 'Calories', value: 1800 },
-    { name: 'Remaining', value: 700 },
+    { name: 'Remaining', value: 700 }, 
   ];
 
   const dataProtein = [
@@ -163,9 +163,24 @@ const Nutrition = () => {
     { name: 'Remaining', value: 18 },
   ];
 
-  //useEffect for updating Piechart
+  //copied from yt guy it splits the piechart in half!
+  const renderCustomizedLabel = ({
+    cx, cy, midAngle, innerRadius, outerRadius, percent, index,
+  }: gaugeProp) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * Math.PI / 180);
+    const y = cy + radius * Math.sin(-midAngle * Math.PI / 180);
+
+    return (
+      <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
+  //liveupdate of piechart
   useEffect(() => {
-    //works by filtering data within last week for macros
+    // Filter data for the past week
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
@@ -176,7 +191,7 @@ const Nutrition = () => {
       return entryDate >= oneWeekAgo;
     });
 
-    //calculate total macronutrients
+    // Calculate total macronutrients
     const totalMacros = filteredData.reduce(
       (total, entry) => {
         total.protein_g += entry.protein_g;
@@ -189,10 +204,19 @@ const Nutrition = () => {
         total.sugar_g += entry.sugar_g;
         return total;
       },
-      {protein_g: 0, carbs_g: 0, fat_total_g: 0, cholesterol_mg: 0, fiber_g: 0, potassium_mg: 0, sodium_mg: 0, sugar_g: 0,}
+      {
+        protein_g: 0,
+        carbs_g: 0,
+        fat_total_g: 0,
+        cholesterol_mg: 0,
+        fiber_g: 0,
+        potassium_mg: 0,
+        sodium_mg: 0,
+        sugar_g: 0,
+      }
     );
 
-    //gets it in appropiate format for data for the pie chart
+    //gets it format for  data for the pie chart
     const pieData: PieData[] = [
       { name: 'Protein', value: totalMacros.protein_g },
       { name: 'Carbs', value: totalMacros.carbs_g },
@@ -208,8 +232,10 @@ const Nutrition = () => {
   }, []);
 
 
-  //useEffect for updating the graph
+
+  //live update graph
   useEffect(() => {
+    // Parse the date from the string
     const parseDate = (dateStr: string): Date => {
       const [time, day] = dateStr.split(', ');
       const [hours, minutes] = time.split(':').map(Number);
@@ -217,6 +243,7 @@ const Nutrition = () => {
       return new Date(yyyy, mm - 1, dd, hours, minutes);
     };
 
+    // Get the start date based on the selected timeframe
     const getStartDate = (timeframe: string): Date => {
       const now = new Date();
       switch (timeframe) {
@@ -233,21 +260,21 @@ const Nutrition = () => {
       }
     };
 
-    //filteing the exercise data based on the selected timeframe
+    // Filter the exercise data based on the selected timeframe
     const filteredExerciseData = exerciseData.filter((exercise) => {
       const exerciseDate = parseDate(exercise.date);
       const startDate = getStartDate(graphtimeframe);
       return exerciseDate >= startDate && exerciseDate <= new Date();
     });
 
-    //filtering the calorie data based on the selected timeframe
+    // Filter the calorie data based on the selected timeframe
     const filteredCalorieData = calorieData.filter((intake) => {
       const intakeDate = parseDate(intake.date);
       const startDate = getStartDate(graphtimeframe);
       return intakeDate >= startDate && intakeDate <= new Date();
     });
 
-    //calculating the cumulative calorie consumption
+    // Calculate cumulative calorie consumption
     let cumulativeCalories = 0;
     const cumulativeCaloriesData = filteredCalorieData.map((intake) => {
       cumulativeCalories += intake.calories;
@@ -258,7 +285,7 @@ const Nutrition = () => {
     });
 
 
-    //calculate cumulative exercise calories
+    // Calculate cumulative exercise calories
     let cumulativeExerciseCalories = 0;
     const cumulativeExerciseCaloriesData = filteredExerciseData.map((exercise) => {
       cumulativeExerciseCalories += exercise.calories;
@@ -268,20 +295,22 @@ const Nutrition = () => {
       };
     });
 
-    //merge cumulative calorie and exercise data
+    // Merge cumulative calorie and exercise data
     const mergedData = cumulativeCaloriesData.map((calorie, index) => ({
       ...calorie,
       ...cumulativeExerciseCaloriesData[index],
     }));
 
+
+    // Set the goal based on the selected timeframe
     const getGoal = (timeframe: string) => {
       switch (timeframe) {
       case 'day':
-        return 250;
+        return 2500;
       case 'week':
-        return 1050;
+        return 17500;
       case 'year':
-        return 1850;
+        return 1750;
       default:
         return null;
       }
@@ -289,12 +318,13 @@ const Nutrition = () => {
 
     const goal = getGoal(graphtimeframe);
 
+    // Assuming goal is a number and not an array
     const mergedDataWithGoal = mergedData.map(data => ({
       ...data,
-      cumulativeExerciseCalories: data.cumulativeExerciseCalories || 0,
-      goal: goal || 0,
+      goal: goal,
     }));
 
+    // Update state with the filtered data
     setFilteredExerciseData(filteredExerciseData);
     setFilteredCalorieData(filteredCalorieData);
     //setCumulativeCaloriesData(mergedData);
@@ -302,30 +332,210 @@ const Nutrition = () => {
     setGoal(goal);
   }, [graphtimeframe]);  
 
+
   return (
     <div className="nutridashboard">
-      <CalorieIntake />
-      <MacroBreakdown MacroData={MacroData} COLORS={COLORS} />
-      <GoalOverview
-        dataCaloriesConsumed={dataCaloriesConsumed}
-        dataProtein={dataProtein}
-        dataCarbs={dataCarbs}
-        COLORS={COLORS}
-      />
-      <GoalSetting
-        timeframe={timeframe}
-        setTimeframe={setTimeframe}
-        exercisegoaltype={exercisegoaltype}
-        setExercisegoal={setExercisegoal}
-        amount={amount}
-        setAmount={setAmount}
-        handle_goalsubmit={handle_goalsubmit}
-      />
-      <MetricsBreakdown
-        cumulativeCaloriesData={cumulativeCaloriesData}
-        graphtimeframe={graphtimeframe}
-        setGraphtimeframe={setGraphtimeframe}
-      />
+      <div className="box calorie-intake">
+        <h1>This Week's Calorie Intake</h1>
+        <div className="line"></div>
+        <div className="atefoodpart">
+          <div className="Caloriesate">
+            <div className="header">
+              <h2>Calories Consumed:</h2>
+            </div>
+            <div className="boldvalue">
+              <FontAwesomeIcon icon={faBowlFood} />
+              <p className="actualvalue">576</p>
+              <p className="atecalslabel">calories</p>
+            </div>
+            <div className="change">
+              <p>Up 10% from last week!</p>
+              <FontAwesomeIcon icon={faArrowTrendUp} />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="box macro-breakdown">
+        <h1>Macronutrient Breakdown (Past Week)</h1>
+        <ResponsiveContainer width="100%" height={180}>
+          <PieChart>
+            <Pie
+              data={MacroData}
+              cx="50%"
+              cy="50%"
+              outerRadius={70}
+              fill="#8884d8"
+              name="name"
+              dataKey="value"
+            >
+              {MacroData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="box goals-score">
+        <div className="goalscorecont">
+          <div className="nutridashcont">
+            <div className="goalscore">
+              <h2>Goal Overview</h2>
+              <FontAwesomeIcon icon={faBullseye} />
+              <p>Goals completed - <b className="goalscompleted"> 2 / 3</b></p>
+              <div className="gaugesection">
+                <div className="gauge">
+                  <h3>Calorie Intake</h3>
+                  <PieChart width={75} height={75}>
+                    <Pie
+                      data={dataCaloriesConsumed}
+                      cx={37.5}
+                      cy={37.5}
+                      startAngle={180}
+                      endAngle={0}
+                      innerRadius={22.5}
+                      outerRadius={30}
+                      fill="#8884d8"
+                      paddingAngle={5}
+                      dataKey="value"
+                      name="name"
+                    >
+                      {
+                        dataCaloriesConsumed.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+                      }
+                    </Pie>
+                    <Tooltip/>
+                  </PieChart>
+                  <div className="gaugelabel">
+                    <p>1800 out of 2500</p>
+                  </div>
+                </div>
+                <div className="gauge">
+                  <h3>Protein Intake</h3>
+                  <PieChart width={75} height={75}>
+                    <Pie
+                      data={dataProtein}
+                      cx={37.5}
+                      cy={37.5}
+                      startAngle={180}
+                      endAngle={0}
+                      innerRadius={22.5}
+                      outerRadius={30}
+                      fill="#82ca9d"
+                      paddingAngle={5}
+                      dataKey="value"
+                      nameKey="name"
+                    >
+                      {
+                        dataProtein.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+                      }
+                    </Pie>
+                    <Tooltip/>
+                  </PieChart>
+                  <div className="gaugelabel">
+                    <p>12 out of 100</p>
+                  </div>
+                </div>
+                <div className="gauge">
+                  <h3>Carbohydrate Intake</h3>
+                  <PieChart width={75} height={75}>
+                    <Pie
+                      data={dataCarbs}
+                      cx={37.5}
+                      cy={37.5}
+                      startAngle={180}
+                      endAngle={0}
+                      innerRadius={22.5}
+                      outerRadius={30}
+                      fill="#82ca9d"
+                      paddingAngle={5}
+                      dataKey="value"
+                      nameKey="name"
+                    >
+                      {
+                        dataCarbs.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+                      }
+                    </Pie>
+                    <Tooltip/>
+                  </PieChart>
+                  <div className="gaugelabel">
+                    <p>56 out of 74</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="box goals-overview">
+        <div className="goalform">
+          <div className="goalsetting">
+            <h2>Goal Setting</h2>
+            <div className="selections">
+              <div className="selection-row">
+                <div className="selectionstimeframe">
+                  <label>Goal Timeframe</label>
+                  <select
+                    value={timeframe}
+                    onChange={(e) => setTimeframe(e.target.value)}
+                  >
+                    <option value="da">Daily</option>
+                    <option value="week">Weekly</option>
+                    <option value="month">Monthly</option>
+                    <option value="year">Yearly</option>
+                  </select>
+                </div>
+                <div className="selectionsvari">
+                  <label>Goal Type</label>
+                  <select
+                    value={exercisegoaltype}
+                    onChange={(e) => setExercisegoal(e.target.value)}
+                  >
+                    <option value="calorie_intake">Calorie Intake</option>
+                    <option value="carbohydrate_intake">Carbohydrate Intake</option>
+                    <option value="protein_intake">Protein Intake</option>
+                  </select>
+                </div>
+              </div>
+              <div className="selectionsamo">
+                <label>Select Goal</label>
+                <input
+                  value={amount ? amount : ''}
+                  type='number'
+                  onChange={(e) => setAmount(e.target.value as unknown as number)}
+                />
+              </div>
+              <button className='submit' onClick={handle_goalsubmit}>
+                Set Goal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="box metrics-breakdown">
+        <h1>Exercise and Calorie Consumption</h1>
+        <div className="timeframe-dropdown">
+          <select value={graphtimeframe} onChange={(e) => setGraphtimeframe(e.target.value)}>
+            <option value="day">Day</option>
+            <option value="week">Week</option>
+            <option value="month">Month</option> 
+            <option value="year">Year</option>
+          </select>
+        </div>
+        <ResponsiveContainer width="100%" height={260}>
+          <LineChart data={cumulativeCaloriesData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="cumulativeCalories" stroke="#82ca9d" />
+            <Line type="monotone" dataKey="cumulativeExerciseCalories" stroke="#8884d8" />
+            <Line type="monotone" dataKey="goal" stroke="#ff0000" dot={false} strokeDasharray="5 5"/>
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

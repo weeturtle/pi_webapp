@@ -1,0 +1,89 @@
+$grid-gap: 20px; 
+$section-padding: 20px;
+$border-radius: 15px;
+$section-background: white;
+$box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+$primary-color: #ECF0F1;
+$secondary-color: #ABB7B7;
+$title-color: #34495E; 
+$value-background-color: #E74C3C;
+$mins-background-color: #F1C40F; 
+$font-color: #ccc;
+
+.calorie-intake {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    max-height: 168px;
+  }
+  
+  .atefoodpart {
+    display: flex;
+    gap: 1rem;
+  
+    > div {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      border-radius: $border-radius;
+      box-shadow: $box-shadow;
+    }
+  
+    .header {
+      margin-bottom: 0.5rem;
+    }
+  
+    h2 {
+      font-size: 0.85rem;
+      font-weight: 550;
+    }
+  
+    .boldvalue {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+  
+    .actualvalue {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-left: 0.5rem;
+      margin-right: 0.25rem;
+    }
+  
+    .atecalslabel {
+      font-size: 0.875rem;
+      color: #ffffff;
+    }
+  
+    .change {
+      display: flex;
+      align-items: center;
+      font-size: 0.75rem;
+    }
+  
+    .Caloriesate {
+      background: #D8FAFC;
+  
+      .fa-bowl-food {
+        color: #0993B2;
+        font-size: 2rem;
+      }
+  
+      .actualvalue {
+        color: #0993B2;
+      }
+  
+      .fa-arrow-trend-up {
+        color: green;
+        margin-left: 0.25rem;
+      }
+  
+      .fa-arrow-trend-down {
+        color: red;
+        margin-left: 0.25rem;
+      }
+    }
+  }

@@ -1,0 +1,52 @@
+$primary-color: #ECF0F1;
+$secondary-color: #ABB7B7;
+$title-color: #34495E; 
+$value-background-color: #E74C3C;
+$mins-background-color: #F1C40F; 
+
+
+$font-color: #ccc;
+$grid-gap: 20px;
+$section-padding: 20px;
+$border-radius: 15px;
+$section-background: white;
+$box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+.exerdashcont {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .mainexerciselabel {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .graphdropdown {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+
+        select {
+            padding: 5px 10px;
+        }
+    }
+
+    .graphcontainer {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .mainexercisegraph {
+        width: 65%;
+    }
+
+    .mainexercisedonut {
+        width: 35%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
