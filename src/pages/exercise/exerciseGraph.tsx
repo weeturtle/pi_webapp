@@ -3,8 +3,8 @@ import './exerciseGraph.scss';
 
 interface Exercise {
   exercise: string;
-  time: number;
-  calories: number;
+  duration: number;
+  calories_burnt: number;
   date: string;
 }
 

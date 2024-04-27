@@ -30,9 +30,9 @@ const Glucose = () => {
   useEffect(() => {  
     const fetchGlucose = async () => {
       //fetch exercise data for current timeframe
-      console.log('fetching exercise data');
+      console.log('fetching glucose data');
 
-      const response = await fetch(`${BASE_URL}/glucose?username=${user}&timeSpan=month`); //expectss both username & timeframe (hopefully the timeframe is suitable!)
+      const response = await fetch(`${BASE_URL}/glucose?username=${user}&timeSpan=${graphTimeFrame}`); //expectss both username & timeframe (hopefully the timeframe is suitable!)
       const result = await response.json();
 
       // console.table(result.values);
