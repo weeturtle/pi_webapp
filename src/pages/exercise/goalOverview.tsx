@@ -1,19 +1,8 @@
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBullseye } from '@fortawesome/free-solid-svg-icons';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import './goalOverview.scss';
 
-
-interface gaugeProp {
-  cx: number;
-  cy: number;
-  midAngle: number;
-  innerRadius: number;
-  outerRadius: number;
-  percent: number;
-  index: number;
-}
 
 const GoalOverview = () => {
   /*Gauge*/
@@ -28,22 +17,7 @@ const GoalOverview = () => {
     { name: 'Remaining', value: 4 },
   ];
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF']; //colours for piechart
-
-  //creates the 180* of the piechart to look like a guage
-  const renderCustomizedLabel = ({
-    cx, cy, midAngle, innerRadius, outerRadius, percent, index,
-  }: gaugeProp) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * Math.PI / 180);
-    const y = cy + radius * Math.sin(-midAngle * Math.PI / 180);
-
-    return (
-      <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
+  const COLOURS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF']; //colours for piechart
 
   return (
     <div className="goaloverview">
@@ -68,7 +42,7 @@ const GoalOverview = () => {
               name="name"
             >
               {
-                dataCalories.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+                dataCalories.map((_, index) => <Cell key={`cell-${index}`} fill={COLOURS[index % COLOURS.length]} />)
               }
             </Pie>
             <Tooltip/>
@@ -94,7 +68,7 @@ const GoalOverview = () => {
               nameKey="name"
             >
               {
-                dataActivity.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+                dataActivity.map((_, index) => <Cell key={`cell-${index}`} fill={COLOURS[index % COLOURS.length]} />)
               }
             </Pie>
             <Tooltip/>
