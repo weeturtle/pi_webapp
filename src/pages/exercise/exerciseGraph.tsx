@@ -1,4 +1,3 @@
-import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import './exerciseGraph.scss';
 
@@ -15,20 +14,20 @@ interface ExerciseType {
 }
 
 interface ExerciseGraphProps {
-  filteredExerciseData: Exercise[];
-  filteredExerciseTypeData: ExerciseType[];
+  exerciseData: Exercise[];
+  exerciseTypeData: ExerciseType[];
   graphtimeframe: string;
   setGraphtimeframe: (value: string) => void;
 }
 
 
 const ExerciseGraph = ({
-  filteredExerciseData,
-  filteredExerciseTypeData,
+  exerciseData,
+  exerciseTypeData,
   graphtimeframe,
   setGraphtimeframe
 }: ExerciseGraphProps) => {
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
+  const COLOURS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
   return (
     <div className="exerdashcont">
@@ -46,8 +45,8 @@ const ExerciseGraph = ({
       <div className="graphcontainer">
         <div className="mainexercisegraph">
           <ResponsiveContainer width="100%" height={300}>
-            {filteredExerciseData.length > 0 ? (
-              <LineChart data={filteredExerciseData}>
+            {exerciseData.length > 0 ? (
+              <LineChart data={exerciseData}>
                 <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
@@ -62,11 +61,12 @@ const ExerciseGraph = ({
           </ResponsiveContainer>
         </div>
         <div className="mainexercisedonut">
-          <ResponsiveContainer width={200} height={200}>
-            {filteredExerciseTypeData.length > 0 ? (
+          {/* <ResponsiveContainer width={200} height={200}> */}
+          <>
+            {exerciseTypeData.length > 0 ? (
               <PieChart>
                 <Pie
-                  data={filteredExerciseTypeData}
+                  data={exerciseTypeData}
                   dataKey="value"
                   nameKey="name"
                   cx="50%"
@@ -74,8 +74,8 @@ const ExerciseGraph = ({
                   outerRadius={80}
                   fill="#8884d8"
                 >
-                  {filteredExerciseTypeData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  {exerciseTypeData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLOURS[index % COLOURS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -83,7 +83,8 @@ const ExerciseGraph = ({
             ) : (
               <p>No data available</p>
             )}
-          </ResponsiveContainer>
+          </>
+          {/* </ResponsiveContainer> */}
         </div>
       </div>
     </div>
