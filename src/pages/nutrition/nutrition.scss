@@ -1,0 +1,42 @@
+$grid-gap: 20px; 
+$section-padding: 20px;
+$border-radius: 15px;
+$section-background: white;
+$box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+$primary-color: #ECF0F1;
+$secondary-color: #ABB7B7;
+$title-color: #34495E; 
+$value-background-color: #E74C3C;
+$mins-background-color: #F1C40F; 
+$font-color: #ccc;
+
+.nutridashboard {
+  margin-left: 10%;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: auto auto;
+  grid-gap: $grid-gap;
+  padding: $grid-gap;
+  height: 90vh;
+
+  .box {
+    padding: $section-padding;
+    border-radius: $border-radius;
+    background: $section-background;
+    box-shadow: $box-shadow;
+  }
+}
+
+h1 {
+  color: $title-color;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.line {
+  height: 4px;
+  background-color: $secondary-color;
+  margin-bottom: 1rem;
+}

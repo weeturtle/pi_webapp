@@ -1,0 +1,70 @@
+$primary-color: #ECF0F1;
+$secondary-color: #ABB7B7;
+$title-color: #34495E; 
+$value-background-color: #E74C3C;
+$mins-background-color: #F1C40F; 
+
+
+$font-color: #ccc;
+$grid-gap: 20px;
+$section-padding: 20px;
+$border-radius: 15px;
+$section-background: white;
+$box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+
+.goaloverview {
+  margin-bottom: 20px;
+  
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  h2::after {
+  content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #000000;
+  }
+  svg {
+    color: #ff8c00;
+    font-size: 24px;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  p {
+  display: inline;
+  font-size: 16px;
+  }
+  .goalscompleted {
+  font-weight: bold;
+  }
+  .gaugesection {
+    padding: 10px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  h3 {
+    margin: 5px 0; 
+    font-size: 1em; 
+    text-align: center; 
+    color: #333; 
+    font-weight: normal; 
+  }
+
+  .gaugelabel {
+    transform: translateY(-20px);
+    p{
+      font-weight: 400;
+      color: #ccc;
+    }
+  }
+}

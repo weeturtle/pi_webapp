@@ -1,0 +1,39 @@
+$grid-gap: 20px; 
+$section-padding: 20px;
+$border-radius: 15px;
+$section-background: white;
+$box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+.glucdashboard {
+  margin-left: 10%;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: auto auto;
+  grid-gap: $grid-gap;
+  padding: $grid-gap;
+  height: 90vh;
+
+  .box {
+    padding: $section-padding;
+    border-radius: $border-radius;
+    background: $section-background;
+    box-shadow: $box-shadow;
+  }
+
+  .carousel {
+    grid-column: 5 / 7;
+    grid-row: 1;
+    min-height: 180px;
+    background-image: url('https://ukhsa.blog.gov.uk/wp-content/uploads/sites/33/2018/05/6.4364_PHE_Health-Matters_Online_960x640_4.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .timeline {
+    grid-column: 1 / 5;
+    grid-row: 3;
+    min-height: 240px;
+  }
+}
