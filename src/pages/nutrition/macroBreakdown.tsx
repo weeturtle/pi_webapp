@@ -1,4 +1,3 @@
-import React from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import './macroBreakdown.scss';
 
@@ -22,7 +21,7 @@ const MacroBreakdown= ({ MacroData, COLORS }: MacroBreakdownProps) => {
             name="name"
             dataKey="value"
           >
-            {MacroData.map((entry, index) => (
+            {MacroData.map((_, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>

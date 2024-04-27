@@ -9,8 +9,8 @@ import { useAuth } from '../../auth/AuthProvider';
 
 interface Exercise {
   exercise: string;
-  time: number;
-  calories: number;
+  duration: number;
+  calories_burnt: number;
   date: string;
 }
 
@@ -34,66 +34,52 @@ const Exercise = () => {
 
   };
 
-  const fetch_exercise = async () => {
-    //fetch exercise data for current timeframe
-    console.log('fetching exercise data');
-
-    const response = await fetch(`${BASE_URL}/exercise?username=${user}&timeSpan=month`); //expectss both username & timeframe (hopefully the timeframe is suitable!)
-    const result = await response.json();
-
-    console.table(result.values);
-
-    
-    setExerciseData(result.values);
-  };
 
   useEffect(() => {
+    const fetch_exercise = async () => {
+      //fetch exercise data for current timeframe
+      console.log('fetching exercise data');
+
+      const response = await fetch(`${BASE_URL}/exercise?username=${user}&timeSpan=${graphTimeFrame}`); //expectss both username & timeframe (hopefully the timeframe is suitable!)
+      const result = await response.json();
+
+      return result.values;
+    };
+
+    const fetch_goal = async () => {
+      //fetch goal data for current timeframe
+      const raw_goal = await fetch(`${BASE_URL}/goal?${new URLSearchParams({
+        username: user || '',
+        goalType: 'exercise',
+        field: 'calories_burnt',
+        timeSpan: graphTimeFrame,
+      })}`, {
+        method: 'GET'
+      });
+
+      const goal_data = await raw_goal.json();
+      // console.table(goal_data);
+      return goal_data.goal;
+    };
+
     const hande_goal_change = async () => {
+      const tempExerciseData = await fetch_exercise() as Exercise[];
+      const goal = await fetch_goal();
 
-      const fetch_exercise = async () => {
-        //fetch exercise data for current timeframe
-        console.log('fetching exercise data');
-  
-        const response = await fetch(`${BASE_URL}/exercise?username=${user}&timeSpan=month`); //expectss both username & timeframe (hopefully the timeframe is suitable!)
-        const result = await response.json();
-  
-        console.table(result.values);
-
-        
-        setExerciseData(result.values);
-      };
-
-      fetch_exercise();
-
-      const fetch_goal = async () => {
-        //fetch goal data for current timeframe
-        const raw_goal = await fetch(`${BASE_URL}/goal?${new URLSearchParams({
-          username: user || '',
-          goalType: 'exercise',
-          field: 'calories_burnt',
-          timeSpan: graphTimeFrame,
-        })}`, {
-          method: 'GET'
-        });
-
-        const goal_data = await raw_goal.json();
-        console.table(goal_data);
-        return goal_data.goal;
-      };
-    
       let cumulativeCalories = 0;
       let cumulativeTime = 0;
-      const cumulativeData = exerciseData.map((exercise) => {
-        cumulativeCalories += exercise.calories;
-        cumulativeTime += exercise.time;
+      const cumulativeData = tempExerciseData.map((exercise) => {
+        cumulativeCalories += exercise.calories_burnt;
+        cumulativeTime += exercise.duration;
         return {
           ...exercise,
           cumulativeCalories,
           cumulativeTime,
         };
       });
-    
-      const goal = await fetch_goal();
+
+      console.table(cumulativeData);
+      
 
       const mergedDataWithGoal = cumulativeData.map((data) => ({
         ...data,
@@ -109,18 +95,21 @@ const Exercise = () => {
       };
 
       setExerciseData(mergedDataWithGoal);
-      setExerciseTypeData(getCountedExerciseTypes(exerciseData));
+      setExerciseTypeData(getCountedExerciseTypes(tempExerciseData));
     };
 
     hande_goal_change();
-
-    console.log('exercise data changed');
-    console.table(exerciseData);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphTimeFrame]);
+
+  const display_cur_data = () => {
+    console.table(exerciseData);
+    console.table(exerciseTypeData);
+  };
 
   return (
     <div className="exerdashboard">
-      <button onClick={fetch_exercise}>Fetch Exercise</button>
+      <button onClick={display_cur_data}>Display current data</button>
       <ExerciseOverview />
       <div className="box goals">
         <div className="exerdashcont">
