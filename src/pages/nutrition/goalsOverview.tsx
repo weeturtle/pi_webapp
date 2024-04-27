@@ -1,4 +1,3 @@
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBullseye } from '@fortawesome/free-solid-svg-icons';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
@@ -41,7 +40,7 @@ const GoalsOverview = ({
                   dataKey="value"
                   name="name"
                 >
-                  {dataCaloriesConsumed.map((entry, index) => (
+                  {dataCaloriesConsumed.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -67,7 +66,7 @@ const GoalsOverview = ({
                   dataKey="value"
                   nameKey="name"
                 >
-                  {dataProtein.map((entry, index) => (
+                  {dataProtein.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -93,7 +92,7 @@ const GoalsOverview = ({
                   dataKey="value"
                   nameKey="name"
                 >
-                  {dataCarbs.map((entry, index) => (
+                  {dataCarbs.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

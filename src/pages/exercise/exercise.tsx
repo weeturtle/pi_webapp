@@ -116,6 +116,7 @@ const Exercise = () => {
 
     console.log('exercise data changed');
     console.table(exerciseData);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphTimeFrame]);
 
   return (

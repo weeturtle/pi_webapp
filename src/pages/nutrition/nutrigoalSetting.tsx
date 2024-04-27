@@ -1,4 +1,3 @@
-import React from 'react';
 import './nutrigoalSetting.scss';
 
 interface GoalSettingProps {

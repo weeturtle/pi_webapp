@@ -1,4 +1,3 @@
-import React from 'react';
 import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line } from 'recharts';
 import './metricsBreakdown.scss';
 
