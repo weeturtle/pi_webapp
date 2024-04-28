@@ -14,7 +14,7 @@ interface GlucoseEntry {
 
 const Glucose = () => {
   const handle_goalsubmit = async () => {
-
+    // Handle goal submission
   };
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
@@ -23,27 +23,18 @@ const Glucose = () => {
   const [graphTimeFrame, setGraphtimeframe] = useState('year');
   const [timeFrame, setTimeframe] = useState('day');
   const [glucoseData, setGlucoseData] = useState<GlucoseEntry[]>([]);
-  const [goal, setGoal] = useState<number | null>(null);
 
   const { user } = useAuth();
 
-  useEffect(() => {  
+  useEffect(() => {
     const fetchGlucose = async () => {
-      //fetch exercise data for current timeframe
       console.log('fetching glucose data');
-
-      const response = await fetch(`${BASE_URL}/glucose?username=${user}&timeSpan=${graphTimeFrame}`); //expectss both username & timeframe (hopefully the timeframe is suitable!)
+      const response = await fetch(`${BASE_URL}/glucose?username=${user}&timeSpan=${graphTimeFrame}`);
       const result = await response.json();
-
-      // console.table(result.values);
-
-      setGlucoseData(result.values);
+      return result.values;
     };
 
-    fetchGlucose();
-
     const fetchGoal = async () => {
-      //fetch goal data for current timeframe
       const raw_goal = await fetch(`${BASE_URL}/goal?${new URLSearchParams({
         username: user || '',
         goalType: 'glucose',
@@ -52,28 +43,27 @@ const Glucose = () => {
       })}`, {
         method: 'GET'
       });
-
       const goal_data = await raw_goal.json();
-      // console.table(goal_data);
-      return goal_data.goal;
+      console.table(goal_data);
+      console.log(goal_data.value);
+      return goal_data.value;
     };
 
     const handleChangeTimeFrame = async () => {
-      setGoal(await fetchGoal());
-    
-      const mergedDataWithGoal = glucoseData.map(data => ({
+      const tempGlucoseData = await fetchGlucose();
+      const goal = await fetchGoal();
+
+      const mergedDataWithGoal = tempGlucoseData.map((data: GlucoseEntry) => ({
         ...data,
         goal: goal,
       }));
 
       setGlucoseData(mergedDataWithGoal);
-      setGoal(goal);
+      console.table(mergedDataWithGoal);
     };
 
     handleChangeTimeFrame();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphTimeFrame]);
-
+  }, [graphTimeFrame, user]);
 
   const dataCalories = [
     { name: 'Calories', value: 800 },

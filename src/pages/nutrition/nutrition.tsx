@@ -8,6 +8,14 @@ import './nutrition.scss';
 import { BASE_URL } from '../../vars';
 import { useAuth } from '../../auth/AuthProvider';
 
+
+interface Exercise {
+  exercise: string;
+  duration: number;
+  calories_burnt: number;
+  date_time: string;
+}
+
 interface CalorieIntake {
   food: string;
   quantity: number;
@@ -142,10 +150,33 @@ const Nutrition = () => {
 
       const goal_data = await raw_goal.json();
       // console.table(goal_data);
-      return goal_data.goal;
+      return goal_data.value;
+    };
+
+    const fetch_exercise = async () => {
+      //fetch exercise data for current timeframe
+      console.log('fetching exercise data');
+    
+      const response = await fetch(`${BASE_URL}/exercise?username=${user}&timeSpan=${graphTimeFrame}`);
+      const result = await response.json();
+    
+      const exerciseData = result.values;
+    
+      //calculate cumulative exercise calories
+      let cumulativeExerciseCalories = 0;
+      const cumulativeExerciseCaloriesData = exerciseData.map((exercise:Exercise) => {
+        cumulativeExerciseCalories += Number(exercise.calories_burnt);
+        return {
+          date: exercise.date_time,
+          cumulativeExerciseCalories,
+        };
+      });
+    
+      return cumulativeExerciseCaloriesData;
     };
 
     const handleChangeTimeFrame = async () => {
+      
       setNutritionData(await fetchNutrition());
       console.log(`Nutrition data for ${graphTimeFrame} fetched`);
       // console.table(nutritionData);
@@ -155,29 +186,28 @@ const Nutrition = () => {
       //calculating the cumulative calorie consumption
       let cumulativeCalories = 0;
       const cumulativeCaloriesData = nutritionData.map((intake) => {
-        cumulativeCalories += intake.calories;
+        cumulativeCalories += Number(intake.calories);
         return {
           date: intake.date_time,
           cumulativeCalories,
         };
       });
-      
+
+      const cumulativeExerciseCaloriesData = await fetch_exercise();
+
       //merge cumulative calorie and exercise data
       const mergedData = cumulativeCaloriesData.map((calorie, index) => ({
         ...calorie,
-        ...cumulativeCaloriesData[index],
+        cumulativeExerciseCalories: cumulativeExerciseCaloriesData[index]?.cumulativeExerciseCalories,
       }));
-      
-      
-      
+    
       const mergedDataWithGoal = mergedData.map(data => ({
         ...data,
-        cumulativeExerciseCalories: data.cumulativeCalories || 0,
         goal: goal || 0,
       }));
+    
       setCumulativeCaloriesData(mergedDataWithGoal);
-
-
+      console.table(mergedDataWithGoal);
       console.table(nutritionData);
     };
 

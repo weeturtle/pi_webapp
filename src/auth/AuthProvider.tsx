@@ -9,6 +9,7 @@ export interface AuthContextType {
   loginAction: (username: string, password: string) => void,
   signupAction: (email: string, username: string, password: string) => void,
   logOut: () => void,
+  setGoal: (username: string, goalType: string, target: number, field: string, timeSpan: string) => Promise<void>,
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -100,12 +101,33 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
     localStorage.removeItem('site');
     navigate('/login');
   };
+
+  //Setting the goals type shi
+  const setGoal = async (username: string, goalType: string, target: number, field: string, timeSpan: string) => {
+    try {
+      const response = await fetch(`${BASE_URL}/goal`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, goalType, target, field, timeSpan }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to set the goal');
+      }
+    } catch (error) {
+      console.error('Error setting goal:', error);
+      throw error;
+    }
+  };
   
   return (
     <AuthContext.Provider value={{
       token, user,
       loginAction, //trying refer within
       signupAction, // --> update: nope just stick it outer
+      setGoal,
       logOut
     }}>
       {children}

@@ -1,4 +1,6 @@
 import './goalSetting.scss';
+import { useAuth } from '../../auth/AuthProvider';
+
 
 interface GoalSettingProps {
   timeframe: string;
@@ -19,6 +21,24 @@ const GoalSetting = ({
   setAmount,
   handle_goalsubmit,
 }: GoalSettingProps) => {
+  const { user } = useAuth();
+  const { setGoal } = useAuth();
+
+  const handleGoalSubmit = async () => {
+    if (!timeframe || !exercisegoaltype || !amount) {
+      console.error('Please fill in all the fields.');
+      return;
+    }
+
+    try {
+      await setGoal(user || '', 'exercise', amount, exercisegoaltype === 'calories' ? 'calories_burnt' : 'duration', timeframe);
+      handle_goalsubmit();
+    } catch (error) {
+      console.error('Failed to set the goal:', error);
+    }
+  };
+ 
+
   return (
     <div className="goal">
       <div className="goalsetting">
@@ -31,7 +51,7 @@ const GoalSetting = ({
                 value={timeframe}
                 onChange={(e) => setTimeframe(e.target.value)}
               >
-                <option value="da">Daily</option>
+                <option value="day">Daily</option>
                 <option value="week">Weekly</option>
                 <option value="month">Monthly</option>
                 <option value="year">Yearly</option>
@@ -43,8 +63,8 @@ const GoalSetting = ({
                 value={exercisegoaltype}
                 onChange={(e) => setExercisegoal(e.target.value)}
               >
-                <option value="calorie">Calories Burnt</option>
-                <option value="activitytime">Activity Time</option>
+                <option value="calories">Calories Burnt</option>
+                <option value="activity_time">Activity Time</option>
               </select>
             </div>
           </div>
@@ -56,7 +76,7 @@ const GoalSetting = ({
               onChange={(e) => setAmount(e.target.value as unknown as number)}
             />
           </div>
-          <button className='submit' onClick={handle_goalsubmit}>
+          <button className='submit' onClick={handleGoalSubmit}>
             Set Goal
           </button>
         </div>

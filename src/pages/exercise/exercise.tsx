@@ -26,14 +26,17 @@ const Exercise = () => {
   const [graphTimeFrame, setGraphTimeFrame] = useState('year');
   const [exerciseGoalType, setExerciseGoalType] = useState('calorie');
   const [amount, setAmount] = useState<number>(0);
+  const { user, setGoal } = useAuth();
 
-  const { user } = useAuth();
-
-  const handle_goalsubmit = async () => { //probably will be kept here
-    //handle the goal buiissioin
-
+  const handle_goalsubmit = async () => {
+    try {
+      await setGoal(user || '', 'exercise', amount, exerciseGoalType, timeFrame);
+      // Reset form fields or show success message
+    } catch (error) {
+      console.error('Error setting goal:', error);
+      // Show error message
+    }
   };
-
 
   useEffect(() => {
     const fetch_exercise = async () => {
@@ -58,19 +61,20 @@ const Exercise = () => {
       });
 
       const goal_data = await raw_goal.json();
-      // console.table(goal_data);
-      return goal_data.goal;
+      console.table(goal_data);
+      return goal_data.value;
     };
 
     const hande_goal_change = async () => {
       const tempExerciseData = await fetch_exercise() as Exercise[];
       const goal = await fetch_goal();
+      console.log(goal);
 
       let cumulativeCalories = 0;
       let cumulativeTime = 0;
       const cumulativeData = tempExerciseData.map((exercise) => {
         cumulativeCalories += exercise.calories_burnt;
-        cumulativeTime += exercise.duration;
+        cumulativeTime += Number(exercise.duration);
         return {
           ...exercise,
           cumulativeCalories,
@@ -102,14 +106,8 @@ const Exercise = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphTimeFrame]);
 
-  const display_cur_data = () => {
-    console.table(exerciseData);
-    console.table(exerciseTypeData);
-  };
-
   return (
     <div className="exerdashboard">
-      <button onClick={display_cur_data}>Display current data</button>
       <ExerciseOverview />
       <div className="box goals">
         <div className="exerdashcont">
