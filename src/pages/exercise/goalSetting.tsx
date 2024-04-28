@@ -1,43 +1,19 @@
 import './goalSetting.scss';
-import { useAuth } from '../../auth/AuthProvider';
+import { useState } from 'react';
 
 
 interface GoalSettingProps {
-  timeframe: string;
-  setTimeframe: (value: string) => void;
-  exercisegoaltype: string;
-  setExercisegoal: (value: string) => void;
-  amount: number;
-  setAmount: (value: number) => void;
-  handle_goalsubmit: () => void;
+  handleGoalSubmit: (timeFrame: string, goalType: string, amount: number) => void;
 }
 
 const GoalSetting = ({
-  timeframe,
-  setTimeframe,
-  exercisegoaltype,
-  setExercisegoal,
-  amount,
-  setAmount,
-  handle_goalsubmit,
+
+  handleGoalSubmit,
 }: GoalSettingProps) => {
-  const { user } = useAuth();
-  const { setGoal } = useAuth();
-
-  const handleGoalSubmit = async () => {
-    if (!timeframe || !exercisegoaltype || !amount) {
-      console.error('Please fill in all the fields.');
-      return;
-    }
-
-    try {
-      await setGoal(user || '', 'exercise', amount, exercisegoaltype === 'calories' ? 'calories_burnt' : 'duration', timeframe);
-      handle_goalsubmit();
-    } catch (error) {
-      console.error('Failed to set the goal:', error);
-    }
-  };
  
+  const [timeFrame, setTimeframe] = useState('day');
+  const [goalType, setGoalType] = useState('calories');
+  const [amount, setAmount] = useState<number>(0);
 
   return (
     <div className="goal">
@@ -48,7 +24,7 @@ const GoalSetting = ({
             <div className="selectionstimeframe">
               <label>Goal Timeframe</label>
               <select
-                value={timeframe}
+                value={timeFrame}
                 onChange={(e) => setTimeframe(e.target.value)}
               >
                 <option value="day">Daily</option>
@@ -60,8 +36,8 @@ const GoalSetting = ({
             <div className="selectionsvari">
               <label>Goal Type</label>
               <select
-                value={exercisegoaltype}
-                onChange={(e) => setExercisegoal(e.target.value)}
+                value={goalType}
+                onChange={(e) => setGoalType(e.target.value)}
               >
                 <option value="calories">Calories Burnt</option>
                 <option value="activity_time">Activity Time</option>
@@ -76,7 +52,7 @@ const GoalSetting = ({
               onChange={(e) => setAmount(e.target.value as unknown as number)}
             />
           </div>
-          <button className='submit' onClick={handleGoalSubmit}>
+          <button className='submit' onClick={() => handleGoalSubmit(timeFrame, goalType, amount)}>
             Set Goal
           </button>
         </div>

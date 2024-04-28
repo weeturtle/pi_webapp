@@ -6,6 +6,8 @@ import ExerciseGraph from './exerciseGraph';
 import './exercise.scss';
 import { BASE_URL } from '../../vars';
 import { useAuth } from '../../auth/AuthProvider';
+import { setGoal } from '../../util/goal';
+import { useToast } from '../../components/toast/toast';
 
 interface Exercise {
   exercise: string;
@@ -22,20 +24,27 @@ interface ExerciseType {
 const Exercise = () => {
   const [exerciseData, setExerciseData] = useState<Exercise[]>([]);
   const [exerciseTypeData, setExerciseTypeData] = useState<ExerciseType[]>([]);
-  const [timeFrame, setTimeframe] = useState('day');
   const [graphTimeFrame, setGraphTimeFrame] = useState('year');
-  const [exerciseGoalType, setExerciseGoalType] = useState('calorie');
-  const [amount, setAmount] = useState<number>(0);
-  const { user, setGoal } = useAuth();
+  const { user } = useAuth();
 
-  const handle_goalsubmit = async () => {
-    try {
-      await setGoal(user || '', 'exercise', amount, exerciseGoalType, timeFrame);
-      // Reset form fields or show success message
-    } catch (error) {
-      console.error('Error setting goal:', error);
-      // Show error message
+  const { addToast } = useToast();
+
+  const handle_goal_submit = (timeFrame: string, goalType: string, amount: number) => {
+    console.log('goal submitted');
+
+    if (!user) {
+      addToast('error', 'Please log in to set a goal.');
+      return;
     }
+
+    if (!timeFrame || !goalType || !amount) {
+      addToast('error', 'Please fill in all the fields.');
+      return;
+    }
+  
+    setGoal(user, 'exercise', amount, goalType === 'calorie' ? 'calories_burnt' : 'duration', timeFrame);
+
+    addToast('success', 'Goal set successfully');
   };
 
   useEffect(() => {
@@ -113,13 +122,7 @@ const Exercise = () => {
         <div className="exerdashcont">
           <GoalOverview />
           <GoalSetting
-            timeframe={timeFrame}
-            setTimeframe={setTimeframe}
-            exercisegoaltype={exerciseGoalType}
-            setExercisegoal={setExerciseGoalType}
-            amount={amount}
-            setAmount={setAmount}
-            handle_goalsubmit={handle_goalsubmit}
+            handleGoalSubmit={handle_goal_submit}
           />
         </div>
       </div>
