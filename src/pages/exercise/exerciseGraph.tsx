@@ -2,10 +2,10 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Pi
 import './exerciseGraph.scss';
 
 interface Exercise {
-  exercise: string;
+  exercise_type: string;
   duration: number;
   calories_burnt: number;
-  date: string;
+  date_time: string;
 }
 
 interface ExerciseType {
@@ -61,8 +61,7 @@ const ExerciseGraph = ({
           </ResponsiveContainer>
         </div>
         <div className="mainexercisedonut">
-          {/* <ResponsiveContainer width={200} height={200}> */}
-          <>
+          <ResponsiveContainer width={200} height={200}>
             {exerciseTypeData.length > 0 ? (
               <PieChart>
                 <Pie
@@ -83,8 +82,7 @@ const ExerciseGraph = ({
             ) : (
               <p>No data available</p>
             )}
-          </>
-          {/* </ResponsiveContainer> */}
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

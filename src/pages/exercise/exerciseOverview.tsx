@@ -1,8 +1,114 @@
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFire, faClock, faDumbbell, faPersonWalking, faArrowTrendUp, faArrowTrendDown } from '@fortawesome/free-solid-svg-icons';
 import './exerciseOverview.scss';
+import { BASE_URL } from '../../vars';
+import { useAuth } from '../../auth/AuthProvider';
+
+
+interface Exercise {
+  exercise_type: string;
+  duration: number;
+  calories_burnt: number;
+  date_time: string;
+}
 
 const ExerciseOverview = () => {
+  const [caloriesBurnt, setCaloriesBurnt] = useState<number>(0);
+  const [caloriesBurntChange, setCaloriesBurntChange] = useState<number>(0);
+  const [totalActivityTime, setTotalActivityTime] = useState<number>(0);
+  const [totalActivityTimeChange, setTotalActivityTimeChange] = useState<number>(0);
+  const [workoutsLogged, setWorkoutsLogged] = useState<number>(0);
+  const [workoutsLoggedChange, setWorkoutsLoggedChange] = useState<number>(0);
+  const [exerciseDiversity, setExerciseDiversity] = useState<number>(0);
+  const [exerciseDiversityChange, setExerciseDiversityChange] = useState<number>(0);
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchExerciseData = async () => {
+      try {                         
+        const processData = (exercises: Exercise[]) => {
+          let totalCalories = 0;
+          let totalTime = 0;
+          let workouts = 0;
+          const exerciseTypes = new Set();
+  
+          exercises.forEach(exercise => {
+            totalCalories += exercise.calories_burnt;
+            totalTime += Number(exercise.duration);
+            workouts++;
+            exerciseTypes.add(exercise.exercise_type);
+          });
+  
+          return {
+            caloriesBurnt: totalCalories,
+            totalActivityTime: totalTime,
+            workoutsLogged: workouts,
+            exerciseDiversity: exerciseTypes.size
+          };
+        };
+        const responseMonth = await fetch(`${BASE_URL}/exercise?username=${user}&timeSpan=month`);
+        const monthResult = await responseMonth.json();
+        const dataMonth = monthResult.success ? monthResult.values : [];
+
+        const currentDate = new Date();
+        const currentWeekDay = currentDate.getDay();
+        const startOfCurrentWeek = new Date();
+        startOfCurrentWeek.setDate(currentDate.getDate() - currentWeekDay);
+        const startOfLastWeek = new Date();
+        startOfLastWeek.setDate(startOfLastWeek.getDate() - 7);
+
+
+        console.log(currentDate);
+        console.log(currentWeekDay);
+        console.log(startOfCurrentWeek);
+        console.log(startOfLastWeek);
+
+        const thisWeekExercises = dataMonth.filter((exercise: Exercise) => {
+          const exerciseDate = new Date(exercise.date_time);
+          return exerciseDate >= startOfCurrentWeek;
+        });
+
+        const previousWeekExercises = dataMonth.filter((exercise: Exercise)=> {
+          const exerciseDate = new Date(exercise.date_time);
+          return exerciseDate < startOfCurrentWeek && exerciseDate >= startOfLastWeek;
+        });
+
+        console.log('Previous weeks shit',previousWeekExercises);
+
+        // Process the current and previous week's exercises
+        const thisWeekData = processData(thisWeekExercises);
+        console.log(thisWeekData);
+        const lastWeekData = processData(previousWeekExercises);
+        console.log(lastWeekData);
+
+        // Set the state with the processed data
+        setCaloriesBurnt(thisWeekData.caloriesBurnt);
+        setCaloriesBurntChange(calculateChange(thisWeekData.caloriesBurnt, lastWeekData.caloriesBurnt));
+        setTotalActivityTime(thisWeekData.totalActivityTime);
+        setTotalActivityTimeChange(calculateChange(thisWeekData.totalActivityTime, lastWeekData.totalActivityTime));
+        setWorkoutsLogged(thisWeekData.workoutsLogged);
+        setWorkoutsLoggedChange(calculateChange(thisWeekData.workoutsLogged, lastWeekData.workoutsLogged));
+        setExerciseDiversity(thisWeekData.exerciseDiversity);
+        setExerciseDiversityChange(calculateChange(thisWeekData.exerciseDiversity, lastWeekData.exerciseDiversity));
+      } catch (error) {
+        console.error('Error fetching exercise overview data:', error);
+      }
+    };
+  
+    fetchExerciseData();
+  }, [user]);
+
+  const calculateChange = (currentValue: number, previousValue: number): number => {
+    if (previousValue === 0) {
+      return 0;
+    }
+    const change = ((currentValue - previousValue) / previousValue) * 100;
+    return +change.toFixed(1);
+  };
+
+
   return (
     <>
       <div className="box fitness">
@@ -16,12 +122,16 @@ const ExerciseOverview = () => {
               </div>
               <div className="boldvalue">
                 <FontAwesomeIcon icon={faFire} />
-                <p className="actualvalue">800</p>
+                <p className="actualvalue">{caloriesBurnt}</p>
                 <p className="calslabel">cals</p>
               </div>
               <div className="change">
-                <p>Up 5% from last week!</p>
-                <FontAwesomeIcon icon={faArrowTrendUp} />
+                {caloriesBurntChange !== 0 && (
+                  <>
+                    <p>{caloriesBurntChange > 0 ? 'Up' : 'Down'} {Math.abs(caloriesBurntChange)}% from last week!</p>
+                    <FontAwesomeIcon icon={caloriesBurntChange > 0 ? faArrowTrendUp : faArrowTrendDown} />
+                  </>
+                )}
               </div>
             </div>
             <div className="Activetime">
@@ -30,12 +140,16 @@ const ExerciseOverview = () => {
               </div>
               <div className="boldvalue">
                 <FontAwesomeIcon icon={faClock} />
-                <p className="actualvalue">56</p>
+                <p className="actualvalue">{totalActivityTime}</p>
                 <p className="minslabel">mins</p>
               </div>
               <div className="change">
-                <p>Down 12% from last week!</p>
-                <FontAwesomeIcon icon={faArrowTrendDown} />
+                {totalActivityTimeChange !== 0 && (
+                  <>
+                    <p>{totalActivityTimeChange > 0 ? 'Up' : 'Down'} {Math.abs(totalActivityTimeChange)}% from last week!</p>
+                    <FontAwesomeIcon icon={totalActivityTimeChange > 0 ? faArrowTrendUp : faArrowTrendDown} />
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -52,12 +166,16 @@ const ExerciseOverview = () => {
               </div>
               <div className="boldvalue">
                 <FontAwesomeIcon icon={faDumbbell} />
-                <p className="actualvalue">2</p>
+                <p className="actualvalue">{workoutsLogged}</p>
                 <p className="excomplabel">workouts</p>
               </div>
               <div className="change">
-                <p>Down 7% from last week!</p>
-                <FontAwesomeIcon icon={faArrowTrendDown} />
+                {workoutsLoggedChange !== 0 && (
+                  <>
+                    <p>{workoutsLoggedChange > 0 ? 'Up' : 'Down'} {Math.abs(workoutsLoggedChange)}% from last week!</p>
+                    <FontAwesomeIcon icon={workoutsLoggedChange > 0 ? faArrowTrendUp : faArrowTrendDown} />
+                  </>
+                )}
               </div>
             </div>
             <div className="Exerciserating">
@@ -66,12 +184,16 @@ const ExerciseOverview = () => {
               </div>
               <div className="boldvalue">
                 <FontAwesomeIcon icon={faPersonWalking} />
-                <p className="actualvalue">8</p>
+                <p className="actualvalue">{exerciseDiversity}</p>
                 <p className="divlabel">exercises</p>
               </div>
               <div className="change">
-                <p>Up 50% from last week!</p>
-                <FontAwesomeIcon icon={faArrowTrendUp} />
+                {exerciseDiversityChange !== 0 && (
+                  <>
+                    <p>{exerciseDiversityChange > 0 ? 'Up' : 'Down'} {Math.abs(exerciseDiversityChange)}% from last week!</p>
+                    <FontAwesomeIcon icon={exerciseDiversityChange > 0 ? faArrowTrendUp : faArrowTrendDown} />
+                  </>
+                )}
               </div>
             </div>
           </div>

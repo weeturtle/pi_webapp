@@ -10,10 +10,10 @@ import { setGoal } from '../../util/goal';
 import { useToast } from '../../components/toast/toast';
 
 interface Exercise {
-  exercise: string;
+  exercise_type: string;
   duration: number;
   calories_burnt: number;
-  date: string;
+  date_type: string;
 }
 
 interface ExerciseType {
@@ -99,15 +99,27 @@ const Exercise = () => {
         caloriesGoal: goal,
       }));
 
-      const getCountedExerciseTypes = (filteredData: Exercise[]): ExerciseType[] => {
+      /*const getCountedExerciseTypes = (filteredData: Exercise[]): ExerciseType[] => {
         const countMap: Record<string, number> = {};
         filteredData.forEach(exercise => {
           countMap[exercise.exercise] = (countMap[exercise.exercise] || 0) + 1;
         });
+        console.log(countMap);
+        return Object.keys(countMap).map(name => ({ name, value: countMap[name] }));
+      };*/
+
+      const getCountedExerciseTypes = (filteredData: Exercise[]): ExerciseType[] => {
+        const countMap: Record<string, number> = {};
+        filteredData.forEach(exercise => {
+          console.log('Exercise Type:', exercise.exercise_type); // Add this line
+          countMap[exercise.exercise_type] = (countMap[exercise.exercise_type] || 0) + 1;
+        });
+        console.log(countMap);
         return Object.keys(countMap).map(name => ({ name, value: countMap[name] }));
       };
 
       setExerciseData(mergedDataWithGoal);
+      console.log('data going in for counting', tempExerciseData);
       setExerciseTypeData(getCountedExerciseTypes(tempExerciseData));
     };
 
