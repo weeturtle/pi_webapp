@@ -8,7 +8,13 @@ export const setGoal = async (username: string, goalType: string, target: number
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, goalType, target, field, timeSpan }),
+      body: JSON.stringify({
+        username,
+        goalType,
+        target,
+        field,
+        timeSpan
+      }),
     });
 
     if (!response.ok) {

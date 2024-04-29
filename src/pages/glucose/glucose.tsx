@@ -5,6 +5,9 @@ import GlucoseTimeline from './glucoseTimeline';
 import './glucose.scss';
 import { BASE_URL } from '../../vars';
 import { useAuth } from '../../auth/AuthProvider';
+import GlucoseGoalSetting from './glucoseGoalSetting';
+import { setGoal } from '../../util/goal';
+import { useToast } from '../../components/toast/toast';
 
 interface GlucoseEntry {
   description: string;
@@ -13,18 +16,29 @@ interface GlucoseEntry {
 }
 
 const Glucose = () => {
-  const handle_goalsubmit = async () => {
-    // Handle goal submission
-  };
-
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
-  const [amount, setAmount] = useState<number>(0);
   const [graphTimeFrame, setGraphtimeframe] = useState('year');
-  const [timeFrame, setTimeframe] = useState('day');
   const [glucoseData, setGlucoseData] = useState<GlucoseEntry[]>([]);
 
   const { user } = useAuth();
+  const { addToast } = useToast();
+
+  const handleGoalSubmit = async (timeFrame: string, goalType: string, amount: number) => {
+
+    if (!user) {
+      addToast('error', 'Please log in to set a goal.');
+      return;
+    }
+
+    if (!timeFrame || !goalType || !amount) {
+      addToast('error', 'Please fill in all the fields.');
+      return;
+    }
+
+    setGoal(user, 'glucose', amount, 'mmol', timeFrame);
+
+  };
 
   useEffect(() => {
     const fetchGlucose = async () => {
@@ -84,12 +98,8 @@ const Glucose = () => {
         <GoalsOverview
           dataCalories={dataCalories}
           COLORS={COLORS}
-          timeframe={timeFrame}
-          setTimeframe={setTimeframe}
-          amount={amount}
-          setAmount={setAmount}
-          handle_goalsubmit={handle_goalsubmit}
         />
+        <GlucoseGoalSetting handleGoalSubmit={handleGoalSubmit} />
       </div>
       <div className="box timeline">
         <GlucoseTimeline glucoseData={glucoseData} />
