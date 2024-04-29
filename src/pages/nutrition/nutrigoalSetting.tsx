@@ -9,7 +9,7 @@ const GoalSetting = ({
   handleGoalSubmit,
 }: GoalSettingProps) => {
   const [timeFrame, setTimeFrame] = useState('day');
-  const [goalType, setGoalType] = useState('calorie_intake');
+  const [goalType, setGoalType] = useState('calories');
   const [amount, setAmount] = useState<number>(0);
 
   return (
@@ -31,7 +31,7 @@ const GoalSetting = ({
               <div className="selectionsvari">
                 <label>Goal Type</label>
                 <select value={goalType} onChange={(e) => setGoalType(e.target.value)}>
-                  <option value="calorie_intake">Calorie Intake</option>
+                  <option value="calories">Calorie Intake</option>
                   <option value="carbohydrate_intake">Carbohydrate Intake</option>
                   <option value="protein_intake">Protein Intake</option>
                 </select>

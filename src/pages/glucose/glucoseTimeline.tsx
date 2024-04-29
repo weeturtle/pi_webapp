@@ -1,5 +1,6 @@
 import { Chrono } from 'react-chrono';
 import './glucoseTimeline.scss';
+import { useEffect } from 'react';
 
 interface GlucoseEntry {
   description: string;
@@ -7,10 +8,10 @@ interface GlucoseEntry {
   glucose_level: number;
 }
 
-/*interface TimelineEntry {
+interface TimelineEntry {
   title: string;
   cardDetailedText: string;
-}*/
+}
 
 
 interface GlucoseTimelineProps {
@@ -36,7 +37,7 @@ const GlucoseTimeline = ({ glucoseData }: GlucoseTimelineProps) => {
     }
   };
 
-  const getTimelineItems = () => {
+  const getTimelineItems = (): TimelineEntry[] => {
     const sortedData = [...glucoseData].sort((a, b) => new Date(b.date_time).getTime() - new Date(a.date_time).getTime());
     //10 most recent ones
     const recentEntries = sortedData.slice(0, 10);
@@ -52,7 +53,7 @@ const GlucoseTimeline = ({ glucoseData }: GlucoseTimelineProps) => {
     return timelineItems;
   };
 
-  /*const testTimelineData: TimelineEntry[] = [
+  const testTimelineData: TimelineEntry[] = [
     { title: 'Saturday, April 27th, Glucose: 6.8', cardDetailedText: 'Random glucose reading' },
     { title: 'Saturday, April 27th, Glucose: 4.8', cardDetailedText: 'Random glucose reading' },
     { title: 'Saturday, April 27th, Glucose: 9.4', cardDetailedText: 'Random glucose reading' },
@@ -63,11 +64,18 @@ const GlucoseTimeline = ({ glucoseData }: GlucoseTimelineProps) => {
     { title: 'Saturday, April 27th, Glucose: 9.1', cardDetailedText: 'Random glucose reading' },
     { title: 'Saturday, April 27th, Glucose: 5.8', cardDetailedText: 'Random glucose reading' },
     { title: 'Friday, April 26th, Glucose: 9.3', cardDetailedText: 'Random glucose reading' }
-  ];*/
+  ];
+
+  useEffect(() => {
+    // for (let i = 0; i < 10; i++) {
+      
+    // }
+    console.table([...testTimelineData, ...getTimelineItems()]);
+  });
 
   return (
     <div className="Gluctimeline">
-      <Chrono items={getTimelineItems() /*testTimelineData*/} mode="HORIZONTAL" />
+      <Chrono items={/*getTimelineItems()*/ testTimelineData} mode="HORIZONTAL" />
     </div>
   );
 };

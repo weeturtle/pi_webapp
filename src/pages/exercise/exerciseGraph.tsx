@@ -5,7 +5,7 @@ interface Exercise {
   exercise_type: string;
   duration: number;
   calories_burnt: number;
-  date_time: string;
+  date_type: string;
 }
 
 interface ExerciseType {

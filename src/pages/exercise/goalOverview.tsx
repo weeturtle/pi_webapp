@@ -58,7 +58,8 @@ const GoalOverview = () => {
         let cumulativeTime = 0;
         exerciseData.forEach((exercise: Exercise) => {
           cumulativeCalories += exercise.calories_burnt;
-          cumulativeTime += exercise.duration;
+          cumulativeTime += Number(exercise.duration);
+          console.log(cumulativeTime);
         });
 
         setCumulativeCalories(cumulativeCalories);
@@ -72,6 +73,9 @@ const GoalOverview = () => {
           cumulativeTime >= activityTimeGoal ? 1 : 0
         ].reduce((a, b) => a + b, 0);
         setGoalsCompleted(completedGoals);
+
+        //console.log(cumulativeTime);
+
       } catch (error) {
         console.error('Failed to fetch cumulative data:', error);
       }

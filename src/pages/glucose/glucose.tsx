@@ -79,10 +79,7 @@ const Glucose = () => {
     handleChangeTimeFrame();
   }, [graphTimeFrame, user]);
 
-  const dataCalories = [
-    { name: 'Calories', value: 800 },
-    { name: 'Remaining', value: 1200 },
-  ];
+
 
   return (
     <div className="glucdashboard">
@@ -96,7 +93,6 @@ const Glucose = () => {
       <div className="box carousel"></div>
       <div className="box goals-overview">
         <GoalsOverview
-          dataCalories={dataCalories}
           COLORS={COLORS}
         />
         <GlucoseGoalSetting handleGoalSubmit={handleGoalSubmit} />

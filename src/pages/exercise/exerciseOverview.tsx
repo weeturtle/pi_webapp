@@ -105,7 +105,7 @@ const ExerciseOverview = () => {
       return 0;
     }
     const change = ((currentValue - previousValue) / previousValue) * 100;
-    return +change.toFixed(1);
+    return +change.toFixed(0);
   };
 
 

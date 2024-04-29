@@ -99,15 +99,6 @@ const Exercise = () => {
         caloriesGoal: goal,
       }));
 
-      /*const getCountedExerciseTypes = (filteredData: Exercise[]): ExerciseType[] => {
-        const countMap: Record<string, number> = {};
-        filteredData.forEach(exercise => {
-          countMap[exercise.exercise] = (countMap[exercise.exercise] || 0) + 1;
-        });
-        console.log(countMap);
-        return Object.keys(countMap).map(name => ({ name, value: countMap[name] }));
-      };*/
-
       const getCountedExerciseTypes = (filteredData: Exercise[]): ExerciseType[] => {
         const countMap: Record<string, number> = {};
         filteredData.forEach(exercise => {
