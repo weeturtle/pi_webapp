@@ -19,7 +19,7 @@ interface ExerciseDataItem {
 }
 
 interface GlucoseDataItem {
-  'glucose-level': number;
+  'glucose_level': number;
   'date_time': number;
   'description': string;
 }
@@ -92,7 +92,7 @@ const Log = ({ data, datatype}:LogData) => {
                     {/*<td>{!isNaN(parseFloat(item['glucose-level'])) ? parseFloat(item['glucose-level']) : 'Invalid Level'}</td>*/}
                     {/*<td>{new Date((item as GlucoseDataItem).(item as GlucoseDataItem)['date-time']).toLocaleDateString()}</td>*/}
                     {/*<td>{(item as GlucoseDataItem).(item as GlucoseDataItem)['glucose-level']}</td>*/}
-                    <td>{(item as GlucoseDataItem)['glucose-level']}</td>
+                    <td>{(item as GlucoseDataItem)['glucose_level']}</td>
                     <td>{(item as GlucoseDataItem)['description']}</td>
                   </>
                 )}

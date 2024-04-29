@@ -21,7 +21,7 @@ interface ExerciseDataItem {
 }
 
 interface GlucoseDataItem {
-  'glucose-level': number;
+  'glucose_level': number;
   'date_time': number;
   'description': string;
 }
