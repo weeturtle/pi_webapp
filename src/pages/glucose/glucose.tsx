@@ -5,6 +5,9 @@ import GlucoseTimeline from './glucoseTimeline';
 import './glucose.scss';
 import { BASE_URL } from '../../vars';
 import { useAuth } from '../../auth/AuthProvider';
+import GlucoseGoalSetting from './glucoseGoalSetting';
+import { setGoal } from '../../util/goal';
+import { useToast } from '../../components/toast/toast';
 
 interface GlucoseEntry {
   description: string;
@@ -13,37 +16,39 @@ interface GlucoseEntry {
 }
 
 const Glucose = () => {
-  const handle_goalsubmit = async () => {
-
-  };
-
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
-  const [amount, setAmount] = useState<number>(0);
   const [graphTimeFrame, setGraphtimeframe] = useState('year');
-  const [timeFrame, setTimeframe] = useState('day');
   const [glucoseData, setGlucoseData] = useState<GlucoseEntry[]>([]);
-  const [goal, setGoal] = useState<number | null>(null);
 
   const { user } = useAuth();
+  const { addToast } = useToast();
 
-  useEffect(() => {  
+  const handleGoalSubmit = async (timeFrame: string, goalType: string, amount: number) => {
+
+    if (!user) {
+      addToast('error', 'Please log in to set a goal.');
+      return;
+    }
+
+    if (!timeFrame || !goalType || !amount) {
+      addToast('error', 'Please fill in all the fields.');
+      return;
+    }
+
+    setGoal(user, 'glucose', amount, 'mmol', timeFrame);
+    addToast('success', 'Goal set successfully');
+  };
+
+  useEffect(() => {
     const fetchGlucose = async () => {
-      //fetch exercise data for current timeframe
       console.log('fetching glucose data');
-
-      const response = await fetch(`${BASE_URL}/glucose?username=${user}&timeSpan=${graphTimeFrame}`); //expectss both username & timeframe (hopefully the timeframe is suitable!)
+      const response = await fetch(`${BASE_URL}/glucose?username=${user}&timeSpan=${graphTimeFrame}`);
       const result = await response.json();
-
-      // console.table(result.values);
-
-      setGlucoseData(result.values);
+      return result.values;
     };
 
-    fetchGlucose();
-
     const fetchGoal = async () => {
-      //fetch goal data for current timeframe
       const raw_goal = await fetch(`${BASE_URL}/goal?${new URLSearchParams({
         username: user || '',
         goalType: 'glucose',
@@ -52,28 +57,27 @@ const Glucose = () => {
       })}`, {
         method: 'GET'
       });
-
       const goal_data = await raw_goal.json();
-      // console.table(goal_data);
-      return goal_data.goal;
+      console.table(goal_data);
+      console.log(goal_data.value);
+      return goal_data.value;
     };
 
     const handleChangeTimeFrame = async () => {
-      setGoal(await fetchGoal());
-    
-      const mergedDataWithGoal = glucoseData.map(data => ({
+      const tempGlucoseData = await fetchGlucose();
+      const goal = await fetchGoal();
+
+      const mergedDataWithGoal = tempGlucoseData.map((data: GlucoseEntry) => ({
         ...data,
         goal: goal,
       }));
 
       setGlucoseData(mergedDataWithGoal);
-      setGoal(goal);
+      console.table(mergedDataWithGoal);
     };
 
     handleChangeTimeFrame();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphTimeFrame]);
-
+  }, [graphTimeFrame, user]);
 
   const dataCalories = [
     { name: 'Calories', value: 800 },
@@ -94,12 +98,8 @@ const Glucose = () => {
         <GoalsOverview
           dataCalories={dataCalories}
           COLORS={COLORS}
-          timeframe={timeFrame}
-          setTimeframe={setTimeframe}
-          amount={amount}
-          setAmount={setAmount}
-          handle_goalsubmit={handle_goalsubmit}
         />
+        <GlucoseGoalSetting handleGoalSubmit={handleGoalSubmit} />
       </div>
       <div className="box timeline">
         <GlucoseTimeline glucoseData={glucoseData} />

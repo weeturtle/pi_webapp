@@ -1,24 +1,17 @@
+import { useState } from 'react';
 import './nutrigoalSetting.scss';
 
 interface GoalSettingProps {
-  timeframe: string;
-  setTimeframe: (value: string) => void;
-  exercisegoaltype: string;
-  setExercisegoal: (value: string) => void;
-  amount: number;
-  setAmount: (value: number) => void;
-  handle_goalsubmit: () => void;
+  handleGoalSubmit: (timeFrame: string, goalType: string, amount: number) => void;
 }
 
 const GoalSetting = ({
-  timeframe,
-  setTimeframe,
-  exercisegoaltype,
-  setExercisegoal,
-  amount,
-  setAmount,
-  handle_goalsubmit,
+  handleGoalSubmit,
 }: GoalSettingProps) => {
+  const [timeFrame, setTimeFrame] = useState('day');
+  const [goalType, setGoalType] = useState('calorie_intake');
+  const [amount, setAmount] = useState<number>(0);
+
   return (
     <div className="box nutrigoals-overview">
       <div className="goalform">
@@ -28,7 +21,7 @@ const GoalSetting = ({
             <div className="selection-row">
               <div className="selectionstimeframe">
                 <label>Goal Timeframe</label>
-                <select value={timeframe} onChange={(e) => setTimeframe(e.target.value)}>
+                <select value={timeFrame} onChange={(e) => setTimeFrame(e.target.value)}>
                   <option value="da">Daily</option>
                   <option value="week">Weekly</option>
                   <option value="month">Monthly</option>
@@ -37,7 +30,7 @@ const GoalSetting = ({
               </div>
               <div className="selectionsvari">
                 <label>Goal Type</label>
-                <select value={exercisegoaltype} onChange={(e) => setExercisegoal(e.target.value)}>
+                <select value={goalType} onChange={(e) => setGoalType(e.target.value)}>
                   <option value="calorie_intake">Calorie Intake</option>
                   <option value="carbohydrate_intake">Carbohydrate Intake</option>
                   <option value="protein_intake">Protein Intake</option>
@@ -52,7 +45,7 @@ const GoalSetting = ({
                 onChange={(e) => setAmount(e.target.value as unknown as number)}
               />
             </div>
-            <button className="submit" onClick={handle_goalsubmit}>
+            <button className="submit" onClick={() => handleGoalSubmit(timeFrame, goalType, amount)}>
                 Set Goal
             </button>
           </div>

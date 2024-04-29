@@ -7,6 +7,16 @@ import MetricsBreakdown from './metricsBreakdown';
 import './nutrition.scss';
 import { BASE_URL } from '../../vars';
 import { useAuth } from '../../auth/AuthProvider';
+import { useToast } from '../../components/toast/toast';
+import { setGoal } from '../../util/goal';
+
+
+interface Exercise {
+  exercise: string;
+  duration: number;
+  calories_burnt: number;
+  date_time: string;
+}
 
 interface CalorieIntake {
   food: string;
@@ -39,24 +49,30 @@ interface PieData {
 }
 
 const Nutrition = () => {
-  const [timeFrame, setTimeframe] = useState('day');
   const [graphTimeFrame, setGraphTimeFrame] = useState('year');
-  const [exerciseGoalType, setExerciseGoalType] = useState('calorie');
-  const [amount, setAmount] = useState<number>(0);
   const [nutritionData, setNutritionData] = useState<MacroEntry[]>([]);
-  // const [calorieData, setCalorieData] = useState<CalorieIntake[]>([]);
   const [cumulativeCaloriesData, setCumulativeCaloriesData] = useState<{ date: string; cumulativeCalories: number; cumulativeExerciseCalories: number; goal: number }[]>([]);
-  const [goal, setGoal] = useState<number | null>(null);
   const [macroData, setMacroData] = useState<PieData[]>([]);
 
   const { user } = useAuth();
+  const { addToast } = useToast();
 
-  const handle_goalsubmit = async () => {
-    //handle the goal buiissioin
-    //actuall chuck it all in
-    //Ill help with the validation but lowkey you should be fine with (try use toast, uwu)
+  const handleGoalSubmit = async (timeFrame: string, goalType: string, amount: number) => {
+    if (!user) {
+      addToast('error', 'Please log in to set a goal.');
+      return;
+    }
+
+    if (!timeFrame || !goalType || !amount) {
+      addToast('error', 'Please fill in all the fields.');
+      return;
+    }
+
+    setGoal(user, 'nutrition', amount, goalType, timeFrame);
+    addToast('success', 'Goal set successfully');
 
   };
+
 
   const COLOURS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
@@ -142,42 +158,64 @@ const Nutrition = () => {
 
       const goal_data = await raw_goal.json();
       // console.table(goal_data);
-      return goal_data.goal;
+      return goal_data.value;
+    };
+
+    const fetch_exercise = async () => {
+      //fetch exercise data for current timeframe
+      console.log('fetching exercise data');
+    
+      const response = await fetch(`${BASE_URL}/exercise?username=${user}&timeSpan=${graphTimeFrame}`);
+      const result = await response.json();
+    
+      const exerciseData = result.values;
+    
+      //calculate cumulative exercise calories
+      let cumulativeExerciseCalories = 0;
+      const cumulativeExerciseCaloriesData = exerciseData.map((exercise:Exercise) => {
+        cumulativeExerciseCalories += Number(exercise.calories_burnt);
+        return {
+          date: exercise.date_time,
+          cumulativeExerciseCalories,
+        };
+      });
+    
+      return cumulativeExerciseCaloriesData;
     };
 
     const handleChangeTimeFrame = async () => {
+      
       setNutritionData(await fetchNutrition());
       console.log(`Nutrition data for ${graphTimeFrame} fetched`);
       // console.table(nutritionData);
-      setGoal(await fetchGoal());
+      const goal = await fetchGoal();
       
       
       //calculating the cumulative calorie consumption
       let cumulativeCalories = 0;
       const cumulativeCaloriesData = nutritionData.map((intake) => {
-        cumulativeCalories += intake.calories;
+        cumulativeCalories += Number(intake.calories);
         return {
           date: intake.date_time,
           cumulativeCalories,
         };
       });
-      
+
+      const cumulativeExerciseCaloriesData = await fetch_exercise();
+
       //merge cumulative calorie and exercise data
       const mergedData = cumulativeCaloriesData.map((calorie, index) => ({
         ...calorie,
-        ...cumulativeCaloriesData[index],
+        cumulativeExerciseCalories: cumulativeExerciseCaloriesData[index]?.cumulativeExerciseCalories,
       }));
-      
-      
-      
+    
       const mergedDataWithGoal = mergedData.map(data => ({
         ...data,
-        cumulativeExerciseCalories: data.cumulativeCalories || 0,
         goal: goal || 0,
       }));
+    
       setCumulativeCaloriesData(mergedDataWithGoal);
-
-
+      console.table(mergedDataWithGoal);
       console.table(nutritionData);
     };
 
@@ -196,13 +234,7 @@ const Nutrition = () => {
         COLORS={COLOURS}
       />
       <GoalSetting
-        timeframe={timeFrame}
-        setTimeframe={setTimeframe}
-        exercisegoaltype={exerciseGoalType}
-        setExercisegoal={setExerciseGoalType}
-        amount={amount}
-        setAmount={setAmount}
-        handle_goalsubmit={handle_goalsubmit}
+        handleGoalSubmit={handleGoalSubmit}
       />
       <MetricsBreakdown
         cumulativeCaloriesData={cumulativeCaloriesData}

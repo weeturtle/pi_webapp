@@ -6,21 +6,11 @@ import './goalsOverview.scss';
 interface GoalsOverviewProps {
   dataCalories: { name: string; value: number }[];
   COLORS: string[];
-  timeframe: string;
-  setTimeframe: (value: string) => void;
-  amount: number;
-  setAmount: (value: number) => void;
-  handle_goalsubmit: () => void;
 }
 
 const GoalsOverview = ({
   dataCalories,
   COLORS,
-  timeframe,
-  setTimeframe,
-  amount,
-  setAmount,
-  handle_goalsubmit,
 }: GoalsOverviewProps) => {
   return (
     <div className="goals-overview">
@@ -55,35 +45,6 @@ const GoalsOverview = ({
             <div className="gaugelabel">
               <p>4.7 out of 6</p>
             </div>
-          </div>
-        </div>
-      </div>
-      <div className="goal">
-        <div className="glucgoalsetting">
-          <h2>Goal Setting</h2>
-          <div className="selections">
-            <div className="selection-row">
-              <div className="selectionstimeframe">
-                <label>Goal Timeframe</label>
-                <select value={timeframe} onChange={(e) => setTimeframe(e.target.value)}>
-                  <option value="da">Daily</option>
-                  <option value="week">Weekly</option>
-                  <option value="month">Monthly</option>
-                  <option value="year">Yearly</option>
-                </select>
-              </div>
-            </div>
-            <div className="selectionsamo">
-              <label>Select Glucose Goal</label>
-              <input
-                value={amount ? amount : ''}
-                type="number"
-                onChange={(e) => setAmount(e.target.value as unknown as number)}
-              />
-            </div>
-            <button className="submit" onClick={handle_goalsubmit}>
-              Set Goal
-            </button>
           </div>
         </div>
       </div>

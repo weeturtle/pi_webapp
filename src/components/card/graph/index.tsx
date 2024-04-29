@@ -20,7 +20,7 @@ interface ExerciseDataItem {
 }
 
 interface GlucoseDataItem {
-  'glucose-level': number;
+  'glucose_level': number;
   'date_time': number;
   'description': string;
 }
@@ -52,7 +52,7 @@ const Graph = ({ data, datatype, timeframe }:GraphData) => {
     case 'Glucose':
       return (data as GlucoseDataItem[]).map((item) => ({
         date: formatDate(item['date_time'], timeframe),
-        value: item['glucose-level'],
+        value: item['glucose_level'],
       }));
     default:
       return [];

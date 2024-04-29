@@ -100,6 +100,7 @@ const AuthProvider = ({ children }: {children: ReactNode}) => {
     localStorage.removeItem('site');
     navigate('/login');
   };
+
   
   return (
     <AuthContext.Provider value={{

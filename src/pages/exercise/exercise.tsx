@@ -6,6 +6,8 @@ import ExerciseGraph from './exerciseGraph';
 import './exercise.scss';
 import { BASE_URL } from '../../vars';
 import { useAuth } from '../../auth/AuthProvider';
+import { setGoal } from '../../util/goal';
+import { useToast } from '../../components/toast/toast';
 
 interface Exercise {
   exercise: string;
@@ -22,18 +24,28 @@ interface ExerciseType {
 const Exercise = () => {
   const [exerciseData, setExerciseData] = useState<Exercise[]>([]);
   const [exerciseTypeData, setExerciseTypeData] = useState<ExerciseType[]>([]);
-  const [timeFrame, setTimeframe] = useState('day');
   const [graphTimeFrame, setGraphTimeFrame] = useState('year');
-  const [exerciseGoalType, setExerciseGoalType] = useState('calorie');
-  const [amount, setAmount] = useState<number>(0);
-
   const { user } = useAuth();
 
-  const handle_goalsubmit = async () => { //probably will be kept here
-    //handle the goal buiissioin
+  const { addToast } = useToast();
 
+  const handle_goal_submit = (timeFrame: string, goalType: string, amount: number) => {
+    console.log('goal submitted');
+
+    if (!user) {
+      addToast('error', 'Please log in to set a goal.');
+      return;
+    }
+
+    if (!timeFrame || !goalType || !amount) {
+      addToast('error', 'Please fill in all the fields.');
+      return;
+    }
+  
+    setGoal(user, 'exercise', amount, goalType === 'calorie' ? 'calories_burnt' : 'duration', timeFrame);
+
+    addToast('success', 'Goal set successfully');
   };
-
 
   useEffect(() => {
     const fetch_exercise = async () => {
@@ -58,19 +70,20 @@ const Exercise = () => {
       });
 
       const goal_data = await raw_goal.json();
-      // console.table(goal_data);
-      return goal_data.goal;
+      console.table(goal_data);
+      return goal_data.value;
     };
 
     const hande_goal_change = async () => {
       const tempExerciseData = await fetch_exercise() as Exercise[];
       const goal = await fetch_goal();
+      console.log(goal);
 
       let cumulativeCalories = 0;
       let cumulativeTime = 0;
       const cumulativeData = tempExerciseData.map((exercise) => {
         cumulativeCalories += exercise.calories_burnt;
-        cumulativeTime += exercise.duration;
+        cumulativeTime += Number(exercise.duration);
         return {
           ...exercise,
           cumulativeCalories,
@@ -102,26 +115,14 @@ const Exercise = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphTimeFrame]);
 
-  const display_cur_data = () => {
-    console.table(exerciseData);
-    console.table(exerciseTypeData);
-  };
-
   return (
     <div className="exerdashboard">
-      <button onClick={display_cur_data}>Display current data</button>
       <ExerciseOverview />
       <div className="box goals">
         <div className="exerdashcont">
           <GoalOverview />
           <GoalSetting
-            timeframe={timeFrame}
-            setTimeframe={setTimeframe}
-            exercisegoaltype={exerciseGoalType}
-            setExercisegoal={setExerciseGoalType}
-            amount={amount}
-            setAmount={setAmount}
-            handle_goalsubmit={handle_goalsubmit}
+            handleGoalSubmit={handle_goal_submit}
           />
         </div>
       </div>

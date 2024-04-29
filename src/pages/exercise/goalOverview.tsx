@@ -2,23 +2,91 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBullseye } from '@fortawesome/free-solid-svg-icons';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import './goalOverview.scss';
+import { useAuth } from '../../auth/AuthProvider';
+import { useState, useEffect } from 'react';
+import { BASE_URL } from '../../vars';
 
+interface Exercise {
+  exercise: string;
+  duration: number;
+  calories_burnt: number;
+  date: string; 
+}
 
 const GoalOverview = () => {
-  /*Gauge*/
-  //gauge mock values for calories burnt goal
+  const { user } = useAuth();
+  const [caloriesGoal, setCaloriesGoal] = useState(0);
+  const [activityTimeGoal, setActivityTimeGoal] = useState(0);
+  const [cumulativeCalories, setCumulativeCalories] = useState(0);
+  const [cumulativeTime, setCumulativeTime] = useState(0);
+
+  useEffect(() => {
+    const fetchGoals = async () => {
+      try {
+        const caloriesResponse = await fetch(`${BASE_URL}/goal?${new URLSearchParams({
+          username: user || '',
+          goalType: 'exercise',
+          field: 'calories_burnt',
+          timeSpan: 'week',
+        })}`);
+        const caloriesData = await caloriesResponse.json();
+        setCaloriesGoal(caloriesData.value);
+        console.log('Calories Goal Data:', caloriesData); // Logging the fetched data
+
+        const activityTimeResponse = await fetch(`${BASE_URL}/goal?${new URLSearchParams({
+          username: user || '',
+          goalType: 'exercise',
+          field: 'duration',
+          timeSpan: 'week',
+        })}`);
+        const activityTimeData = await activityTimeResponse.json();
+        setActivityTimeGoal(activityTimeData.value);
+        console.log('Activity Time Goal Data:', activityTimeData); // Logging the fetched data
+      } catch (error) {
+        console.error('Failed to fetch goals:', error);
+      }
+    };
+
+    const fetchCumulativeData = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/exercise?username=${user}&timeSpan=week`);
+        const result = await response.json();
+        const exerciseData = result.values;
+
+        let cumulativeCalories = 0;
+        let cumulativeTime = 0;
+        exerciseData.forEach((exercise: Exercise) => {
+          cumulativeCalories += exercise.calories_burnt;
+          cumulativeTime += exercise.duration;
+        });
+
+        setCumulativeCalories(cumulativeCalories);
+        setCumulativeTime(cumulativeTime);
+        console.log('Cumulative Data:', { cumulativeCalories, cumulativeTime }); // Logging the aggregated data
+        console.table(exerciseData); // Displaying all exercise data in a table format
+      } catch (error) {
+        console.error('Failed to fetch cumulative data:', error);
+      }
+    };
+
+    fetchGoals();
+    fetchCumulativeData();
+  }, [user]);
+
+  console.log('Render Data:', { caloriesGoal, cumulativeCalories, activityTimeGoal, cumulativeTime }); // Logging data at render
+
   const dataCalories = [
-    { name: 'Calories', value: 800 },
-    { name: 'Remaining', value: 1200 }, 
+    { name: 'Calories', value: cumulativeCalories },
+    { name: 'Remaining', value: caloriesGoal - cumulativeCalories },
   ];
-  //gauge mock values for activity time goal
+
   const dataActivity = [
-    { name: 'Activity', value: 56 },
-    { name: 'Remaining', value: 4 },
+    { name: 'Activity', value: cumulativeTime },
+    { name: 'Remaining', value: activityTimeGoal - cumulativeTime },
   ];
 
-  const COLOURS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF']; //colours for piechart
-
+  const COLOURS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
+  
   return (
     <div className="goaloverview">
       <h2>Goal Overview</h2>
@@ -48,7 +116,7 @@ const GoalOverview = () => {
             <Tooltip/>
           </PieChart>
           <div className="gaugelabel">
-            <p>800 out of 2000</p>
+            <p>{cumulativeCalories} out of {caloriesGoal}</p>
           </div>
         </div>
         <div className="gauge">
@@ -74,7 +142,7 @@ const GoalOverview = () => {
             <Tooltip/>
           </PieChart>
           <div className="gaugelabel">
-            <p>56 out of 60</p>
+            <p>{cumulativeTime} out of {activityTimeGoal}</p>
           </div>
         </div>
       </div>
