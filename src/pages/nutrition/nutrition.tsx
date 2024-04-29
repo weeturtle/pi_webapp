@@ -7,6 +7,8 @@ import MetricsBreakdown from './metricsBreakdown';
 import './nutrition.scss';
 import { BASE_URL } from '../../vars';
 import { useAuth } from '../../auth/AuthProvider';
+import { useToast } from '../../components/toast/toast';
+import { setGoal } from '../../util/goal';
 
 
 interface Exercise {
@@ -47,24 +49,30 @@ interface PieData {
 }
 
 const Nutrition = () => {
-  const [timeFrame, setTimeframe] = useState('day');
   const [graphTimeFrame, setGraphTimeFrame] = useState('year');
-  const [exerciseGoalType, setExerciseGoalType] = useState('calorie');
-  const [amount, setAmount] = useState<number>(0);
   const [nutritionData, setNutritionData] = useState<MacroEntry[]>([]);
-  // const [calorieData, setCalorieData] = useState<CalorieIntake[]>([]);
   const [cumulativeCaloriesData, setCumulativeCaloriesData] = useState<{ date: string; cumulativeCalories: number; cumulativeExerciseCalories: number; goal: number }[]>([]);
-  const [goal, setGoal] = useState<number | null>(null);
   const [macroData, setMacroData] = useState<PieData[]>([]);
 
   const { user } = useAuth();
+  const { addToast } = useToast();
 
-  const handle_goalsubmit = async () => {
-    //handle the goal buiissioin
-    //actuall chuck it all in
-    //Ill help with the validation but lowkey you should be fine with (try use toast, uwu)
+  const handleGoalSubmit = async (timeFrame: string, goalType: string, amount: number) => {
+    if (!user) {
+      addToast('error', 'Please log in to set a goal.');
+      return;
+    }
+
+    if (!timeFrame || !goalType || !amount) {
+      addToast('error', 'Please fill in all the fields.');
+      return;
+    }
+
+    setGoal(user, 'nutrition', amount, goalType, timeFrame);
+    addToast('success', 'Goal set successfully');
 
   };
+
 
   const COLOURS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
@@ -180,7 +188,7 @@ const Nutrition = () => {
       setNutritionData(await fetchNutrition());
       console.log(`Nutrition data for ${graphTimeFrame} fetched`);
       // console.table(nutritionData);
-      setGoal(await fetchGoal());
+      const goal = await fetchGoal();
       
       
       //calculating the cumulative calorie consumption
@@ -226,13 +234,7 @@ const Nutrition = () => {
         COLORS={COLOURS}
       />
       <GoalSetting
-        timeframe={timeFrame}
-        setTimeframe={setTimeframe}
-        exercisegoaltype={exerciseGoalType}
-        setExercisegoal={setExerciseGoalType}
-        amount={amount}
-        setAmount={setAmount}
-        handle_goalsubmit={handle_goalsubmit}
+        handleGoalSubmit={handleGoalSubmit}
       />
       <MetricsBreakdown
         cumulativeCaloriesData={cumulativeCaloriesData}

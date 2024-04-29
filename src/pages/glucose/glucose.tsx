@@ -37,7 +37,7 @@ const Glucose = () => {
     }
 
     setGoal(user, 'glucose', amount, 'mmol', timeFrame);
-
+    addToast('success', 'Goal set successfully');
   };
 
   useEffect(() => {
