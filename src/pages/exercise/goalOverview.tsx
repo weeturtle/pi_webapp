@@ -10,7 +10,7 @@ interface Exercise {
   exercise: string;
   duration: number;
   calories_burnt: number;
-  date: string; 
+  date: string;
 }
 
 const GoalOverview = () => {
@@ -23,25 +23,25 @@ const GoalOverview = () => {
   useEffect(() => {
     const fetchGoals = async () => {
       try {
-        const caloriesResponse = await fetch(`${BASE_URL}/goal?${new URLSearchParams({
-          username: user || '',
-          goalType: 'exercise',
-          field: 'calories_burnt',
-          timeSpan: 'week',
-        })}`);
-        const caloriesData = await caloriesResponse.json();
-        setCaloriesGoal(caloriesData.value);
-        console.log('Calories Goal Data:', caloriesData); // Logging the fetched data
+        const responses = await Promise.all([
+          fetch(`${BASE_URL}/goal?${new URLSearchParams({
+            username: user || '',
+            goalType: 'exercise',
+            field: 'calories_burnt',
+            timeSpan: 'week',
+          })}`),
+          fetch(`${BASE_URL}/goal?${new URLSearchParams({
+            username: user || '',
+            goalType: 'exercise',
+            field: 'duration',
+            timeSpan: 'week',
+          })}`)
+        ]);
+        const [caloriesData, activityTimeData] = await Promise.all(responses.map(res => res.json()));
 
-        const activityTimeResponse = await fetch(`${BASE_URL}/goal?${new URLSearchParams({
-          username: user || '',
-          goalType: 'exercise',
-          field: 'duration',
-          timeSpan: 'week',
-        })}`);
-        const activityTimeData = await activityTimeResponse.json();
+        setCaloriesGoal(caloriesData.value);
         setActivityTimeGoal(activityTimeData.value);
-        console.log('Activity Time Goal Data:', activityTimeData); // Logging the fetched data
+        console.log('Goals Fetched:', { caloriesData, activityTimeData });
       } catch (error) {
         console.error('Failed to fetch goals:', error);
       }
@@ -57,13 +57,24 @@ const GoalOverview = () => {
         let cumulativeTime = 0;
         exerciseData.forEach((exercise: Exercise) => {
           cumulativeCalories += exercise.calories_burnt;
-          cumulativeTime += exercise.duration;
+          cumulativeTime += Number(exercise.duration);
+          console.log(cumulativeTime);
         });
 
         setCumulativeCalories(cumulativeCalories);
         setCumulativeTime(cumulativeTime);
-        console.log('Cumulative Data:', { cumulativeCalories, cumulativeTime }); // Logging the aggregated data
-        console.table(exerciseData); // Displaying all exercise data in a table format
+        console.log('Cumulative Data:', { cumulativeCalories, cumulativeTime });
+        console.table(exerciseData);
+
+        // Calculate completed goals
+        // const completedGoals = [
+        //   cumulativeCalories >= caloriesGoal ? 1 : 0,
+        //   cumulativeTime >= activityTimeGoal ? 1 : 0
+        // ].reduce((a, b) => a + b, 0);
+        // setGoalsCompleted(completedGoals);
+
+        //console.log(cumulativeTime);
+
       } catch (error) {
         console.error('Failed to fetch cumulative data:', error);
       }
@@ -73,16 +84,14 @@ const GoalOverview = () => {
     fetchCumulativeData();
   }, [user]);
 
-  console.log('Render Data:', { caloriesGoal, cumulativeCalories, activityTimeGoal, cumulativeTime }); // Logging data at render
-
   const dataCalories = [
     { name: 'Calories', value: cumulativeCalories },
-    { name: 'Remaining', value: caloriesGoal - cumulativeCalories },
+    { name: 'Remaining', value: Math.max(0, caloriesGoal - cumulativeCalories) },
   ];
 
   const dataActivity = [
     { name: 'Activity', value: cumulativeTime },
-    { name: 'Remaining', value: activityTimeGoal - cumulativeTime },
+    { name: 'Remaining', value: Math.max(0, activityTimeGoal - cumulativeTime) },
   ];
 
   const COLOURS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];

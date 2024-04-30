@@ -76,21 +76,6 @@ const Nutrition = () => {
 
   const COLOURS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
-  const dataCaloriesConsumed = [
-    { name: 'Calories', value: 1800 },
-    { name: 'Remaining', value: 700 },
-  ];
-
-  const dataProtein = [
-    { name: 'Protein', value: 12 },
-    { name: 'Remaining', value: 88 },
-  ];
-
-  const dataCarbs = [
-    { name: 'Carbs', value: 56 },
-    { name: 'Remaining', value: 18 },
-  ];
-
   const fetchNutrition = async () => {
     //fetch nutrition data for current timeframe
 
@@ -227,12 +212,7 @@ const Nutrition = () => {
     <div className="nutridashboard">
       <CalorieIntake />
       <MacroBreakdown MacroData={macroData} COLORS={COLOURS} />
-      <GoalOverview
-        dataCaloriesConsumed={dataCaloriesConsumed}
-        dataProtein={dataProtein}
-        dataCarbs={dataCarbs}
-        COLORS={COLOURS}
-      />
+      <GoalOverview COLORS={COLOURS} />
       <GoalSetting
         handleGoalSubmit={handleGoalSubmit}
       />

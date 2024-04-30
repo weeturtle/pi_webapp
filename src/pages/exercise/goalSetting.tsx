@@ -40,7 +40,7 @@ const GoalSetting = ({
                 onChange={(e) => setGoalType(e.target.value)}
               >
                 <option value="calories">Calories Burnt</option>
-                <option value="activity_time">Activity Time</option>
+                <option value="duration">Activity Time</option>
               </select>
             </div>
           </div>
