@@ -15,7 +15,7 @@ const NutritionInputs = () => {
   const { addToast } = useToast();
 
   const handle_submit = async () => {
-    if (!entryvalidation(addToast)) {
+    if (!entryvalidation()) {
       addToast('error', 'Food entry not valid!');
       return;
     }
@@ -34,10 +34,7 @@ const NutritionInputs = () => {
   };
 
   //Validatyion stuff need to add API maybe to double check --> Neev said they would do backend so only do basics for now
-  const entryvalidation = (addToast: (type: string, message?: string) => void) => {
-    const now = new Date();
-    const nextYear = new Date(now.setFullYear(now.getFullYear() + 1));
-    const prevYear = new Date(now.setFullYear(now.getFullYear() - 1));
+  const entryvalidation = () => {
     //description --> shioukld be called food name instead 
     if (!description || !datetime || !quantity || !calories) {
       addToast('warning', 'Please fill in all fields correctly.');
@@ -53,12 +50,6 @@ const NutritionInputs = () => {
     //reasonable calorie count
     if (calories > 9999 || calories < 1) {
       addToast('warning', 'Calorie count unreasonable.');
-      return false;
-    }
-
-    //datetime checker 
-    if (datetime > nextYear || datetime < prevYear) {
-      addToast('warning', 'Date and time not valid.');
       return false;
     }
 

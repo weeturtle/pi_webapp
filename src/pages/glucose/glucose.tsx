@@ -18,7 +18,7 @@ interface GlucoseEntry {
 const Glucose = () => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
-  const [graphTimeFrame, setGraphtimeframe] = useState('year');
+  const [graphTimeFrame, setGraphtimeframe] = useState('month');
   const [glucoseData, setGlucoseData] = useState<GlucoseEntry[]>([]);
 
   const { user } = useAuth();

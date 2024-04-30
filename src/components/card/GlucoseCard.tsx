@@ -9,7 +9,7 @@ import { BASE_URL } from '../../vars';
 
 export const GlucoseCard = () => {
   const [data, setData] = useState([]);
-  const [timeframe, setTimeframe] = useState('day');
+  const [timeframe, setTimeframe] = useState('week');
   const { user } = useAuth();
 
   useEffect(() => {
