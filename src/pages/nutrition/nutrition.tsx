@@ -49,7 +49,7 @@ interface PieData {
 }
 
 const Nutrition = () => {
-  const [graphTimeFrame, setGraphTimeFrame] = useState('year');
+  const [graphTimeFrame, setGraphTimeFrame] = useState('month');
   const [nutritionData, setNutritionData] = useState<MacroEntry[]>([]);
   const [cumulativeCaloriesData, setCumulativeCaloriesData] = useState<{ date: string; cumulativeCalories: number; cumulativeExerciseCalories: number; goal: number }[]>([]);
   const [macroData, setMacroData] = useState<PieData[]>([]);

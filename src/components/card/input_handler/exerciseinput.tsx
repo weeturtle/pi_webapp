@@ -29,23 +29,23 @@ const ExerciseInputs = () => {
 
   const handle_submit = async () => {
     // TODO! Check if all fields are filled
-    if (!entryvalidation(addToast)) {
+    if (!entryvalidation()) {
       return;
     }
 
     if (await send_data()) {
       clear_fields();
-      addToast('success', 'Meal added successfully!');
+      addToast('success', 'Exercise added successfully!');
     } else {
-      addToast('error', 'Failed to add meal.');
+      addToast('error', 'Failed to add exercise.');
     }
   };
 
   //Validatyion stuff need to add API maybe to double check --> Neev said they would do backend so only do basics for now
-  const entryvalidation = (addToast: (type: string, message?: string) => void) => {
-    const now = new Date();
-    const nextYear = new Date(now.setFullYear(now.getFullYear() + 1));
-    const prevYear = new Date(now.setFullYear(now.getFullYear() - 1));
+  const entryvalidation = () => {
+    // const now = new Date();
+    // const nextYear = new Date(now.setFullYear(now.getFullYear() + 1));
+    // const prevYear = new Date(now.setFullYear(now.getFullYear() - 1));
     //description --> shioukld be called food name instead 
     if (!description || duration <= 0 || calories <= 0 || !datetime || !sport || sport === '') {
       addToast('warning', 'Please fill in all fields correctly.');
@@ -64,11 +64,11 @@ const ExerciseInputs = () => {
       return false;
     }
 
-    //datetime checker 
-    if (datetime > nextYear || datetime < prevYear) {
-      addToast('warning', 'Date and time not valid.');
-      return false;
-    }
+    // //datetime checker 
+    // if (datetime > nextYear || datetime < prevYear) {
+    //   addToast('warning', 'Date and time not valid.');
+    //   return false;
+    // }
     //if no sport sleected from dropdown 
     if (!SPORTS.includes(sport)) {
       addToast('warning', 'No sport selected.');

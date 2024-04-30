@@ -24,7 +24,7 @@ interface ExerciseType {
 const Exercise = () => {
   const [exerciseData, setExerciseData] = useState<Exercise[]>([]);
   const [exerciseTypeData, setExerciseTypeData] = useState<ExerciseType[]>([]);
-  const [graphTimeFrame, setGraphTimeFrame] = useState('year');
+  const [graphTimeFrame, setGraphTimeFrame] = useState('month');
   const { user } = useAuth();
 
   const { addToast } = useToast();
