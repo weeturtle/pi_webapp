@@ -19,7 +19,6 @@ const GoalOverview = () => {
   const [activityTimeGoal, setActivityTimeGoal] = useState(0);
   const [cumulativeCalories, setCumulativeCalories] = useState(0);
   const [cumulativeTime, setCumulativeTime] = useState(0);
-  const [goalsCompleted, setGoalsCompleted] = useState(0);
 
   useEffect(() => {
     const fetchGoals = async () => {
@@ -68,11 +67,11 @@ const GoalOverview = () => {
         console.table(exerciseData);
 
         // Calculate completed goals
-        const completedGoals = [
-          cumulativeCalories >= caloriesGoal ? 1 : 0,
-          cumulativeTime >= activityTimeGoal ? 1 : 0
-        ].reduce((a, b) => a + b, 0);
-        setGoalsCompleted(completedGoals);
+        // const completedGoals = [
+        //   cumulativeCalories >= caloriesGoal ? 1 : 0,
+        //   cumulativeTime >= activityTimeGoal ? 1 : 0
+        // ].reduce((a, b) => a + b, 0);
+        // setGoalsCompleted(completedGoals);
 
         //console.log(cumulativeTime);
 
